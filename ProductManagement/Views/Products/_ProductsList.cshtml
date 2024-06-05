@@ -1,0 +1,236 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ProductManagement.Entities.ViewModels.ProductAddEdit
+<style>
+    .accordion-button:not(.collapsed)::after {
+        background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%230c63e4'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e);
+        transform: rotate(-180deg);
+    }
+</style>
+<div class="mt-4">
+    <table class="table accordion table-striped table-hover">
+        <thead>
+            <tr>
+                <th>
+
+                </th>
+                @*   <th>
+                Product Image
+                </th> *@
+                <th hidden>
+                    Product Id
+                </th>
+                <th>
+                    <div class="d-flex align-items-center">
+                        <div>
+                            Product Name
+                        </div>
+                        <div class="d-flex flex-column">
+                            <div class="upArrow" id="up-ProductName" style="display:block" onclick="sortcolumn('ProductName', false);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                            <div class="downArrow" id="down-ProductName" style="display:none" onclick="sortcolumn('ProductName', true);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+                            @*   <div class="upArrow" id="up-ProductName" style="display:none" onclick="sortcolumn('ProductName', true);"> <i class="fa-solid fa-chevron-up"></i> </div>
+                            <div class="downArrow" id="down-ProductName" style="display:none" onclick="sortcolumn('ProductName' ,false);"> <i class="fa-solid fa-chevron-down"></i> </div> *@
+                        </div>
+
+                    </div>
+
+                </th>
+                <th>
+                    <div class="d-flex">
+                        Category
+                        <div class="d-flex flex-column">
+                            <div class="upArrow" id="up-Category" style="display:block" onclick="sortcolumn('Category', false);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                            <div class="downArrow" id="down-Category" style="display:none" onclick="sortcolumn('Category', true);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </th>
+                <th>
+                    <div class="d-flex">
+                        Price
+                        <div class="d-flex flex-column">
+                            <div class="upArrow" id="up-Price" style="display:block" onclick="sortcolumn('Price', false);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                            <div class="downArrow" id="down-Price" style="display:none" onclick="sortcolumn('Price', true);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </th>
+                <th>
+                    <div class="d-flex">
+                        Supplier Name
+                        <div class="d-flex flex-column">
+                            <div class="upArrow" id="up-SupplierName" style="display:block" onclick="sortcolumn('SupplierName', false);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                            <div class="downArrow" id="down-SupplierName" style="display:none" onclick="sortcolumn('SupplierName', true);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </th>
+                <th>
+                    <div class="d-flex">
+                        Supplier Email
+                        <div class="d-flex flex-column">
+                            <div class="upArrow" id="up-SupplierEmail" style="display:block" onclick="sortcolumn('SupplierEmail', false);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                            <div class="downArrow" id="down-SupplierEmail" style="display:none" onclick="sortcolumn('SupplierEmail', true);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </th>
+
+                <th>
+                    <div class="d-flex">
+                        Available From
+                        <div class="d-flex flex-column">
+                            <div class="upArrow" id="up-AvailableFrom" style="display:block" onclick="sortcolumn('AvailableFrom', false);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                            <div class="downArrow" id="down-AvailableFrom" style="display:none" onclick="sortcolumn('AvailableFrom', true);">
+                                <i class="fas fa-sort"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </th>
+
+
+
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Products)
+            {
+                <tr>
+                    <td class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#accordian-@item.ProductId">
+                        @* <img src="@item.FilePath" height="50" width="50" />  *@
+
+                    <td hidden>@item.ProductId</td>
+                    <td>@item.ProductName</td>
+                    <td>@item.Category</td>
+                    <td>@item.Price</td>
+                    <td>@item.SupplierName</td>
+                    <td>@item.SupplierEmail</td>
+                    <td>
+                            @{
+                                var date = DateOnly.FromDateTime(@item.AvailableFrom);
+                            }
+                            @date
+                    </td>
+
+
+                    <td>
+                        <a class="btn btn-outline-info" asp-action="ProductAddEdit" asp-controller="Products" asp-route-ProductId="@item.ProductId">Edit</a>
+                        <a class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePopup" data-bs-ProductId="@item.ProductId">Delete</a>
+                    </td>
+
+                </tr>
+                <tr class="collapse accordion-collapse" id="accordian-@item.ProductId" data-bs-parent=".table">
+                    <td colspan="1"> <img src="@item.FilePath" height="50" width="50" /> </td>
+                    <td colspan="3"> <strong>Product description : </strong> @item.ProductDescription </td>
+                    <td colspan="2"> <strong>Product Website :</strong>  @item.ProductWebsite  </td>
+                    <td colspan="3"> <strong>Available At :</strong>  @item.AvailableAt  </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (ViewBag.TotalPages > 1)
+    {
+        <!-- Pagination controls -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                        <a class="page-link" href="#" onclick="filterDataPagination(@i)">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
+
+
+
+
+<div class="modal fade" id="deletePopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    Are you sure ? You wnat to delete this product?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form asp-action="DeleteProduct" asp-controller="Products">
+                    <input name="ProductId" id="ProductId" hidden />
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const deletePopup = document.getElementById('deletePopup')
+    if (deletePopup) {
+        debugger
+        deletePopup.addEventListener('show.bs.modal', event => {
+            // Button that triggered the modal
+            const button = event.relatedTarget
+            // Extract info from data-bs-* attributes
+
+            const ProductId = button.getAttribute('data-bs-ProductId')
+            // If necessary, you could initiate an Ajax request here
+            // and then do the updating in a callback.
+            // Update the modal's content.
+
+            document.getElementById('ProductId').value = ProductId;
+
+
+        })
+    }
+</script>

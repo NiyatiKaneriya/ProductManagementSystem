@@ -1,0 +1,52 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model ProductManagement.Entities.ViewModels.CategoryAddEdit
+<div class="mt-4">
+    <table class="table table-striped table-hover">
+       <thead>
+           <tr>
+                <th hidden>
+                    Category Id
+                </th>
+                <th>
+                    Category Name
+                </th>
+                <th>
+                    Total Products
+                </th>
+                <th>
+                    Actions
+                </th>
+           </tr>
+       </thead>
+       <tbody>
+            @foreach(var item in Model.Categories)
+            {
+                <tr>
+                    <td hidden>@item.CategoryId @item.Sequence</td>
+                    <td>@item.CategoryName</td>
+                    <td>
+                        @if(item.TotalProducts > 0)
+                        {
+                            <a type="button" class="badge bg-primary text-decoration-none  text-light p-2 px-3" asp-area="" asp-controller="Products" asp-action="Index"
+                            asp-route-CategoryId="@item.CategoryId">@item.TotalProducts</a>
+                        }
+                        else{
+                            <a type="button" class="badge bg-primary text-decoration-none  text-light p-2 px-3" asp-area="" 
+                               >@item.TotalProducts</a>
+                            
+                            }
+
+                    </td>
+                    <td>
+                        <a type="button" class="btn btn-outline-info" asp-action="CategoryAddEdit" asp-controller="Category" asp-route-CategoryId="@item.CategoryId">Edit</a>
+                        <a type="button" class="btn btn-outline-danger" asp-action="DeleteCategory" asp-controller="Category" asp-route-CategoryId="@item.CategoryId">Delete</a>
+                    </td>
+                </tr>
+            }
+       </tbody>
+   </table>
+   
+</div>

@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model ProductManagement.Entities.ViewModels.CategoryAddEdit
+<section >
+    
+    <h3 class="mb-3">Categories</h3>
+    
+    <a type="button" class="btn btn-outline-info" asp-action="CategoryAddEdit" asp-controller="Category">Add Category</a>
+
+    <partial name="_CategoryList" />
+</section>
+@section Scripts{
+    <script>
+        function TotalProductRedirect(TotalProducts, CategoryId) {
+
+            var categoryfilter = CategoryId;
+            var generalSearch = "";
+            var multiselectlist = "";
+            var columnName = "ProductId";
+            var sorttype = "Asce";
+            var page = 1;
+            
+            $.ajax({
+                url: '/Products/GetProductsByFilter',
+                data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page },
+
+                success: function (response) {
+                    const page = window.open("Products", "_self")
+                    page.document.getElementById('categoryfilter').value = CategoryId;
+                    
+                    
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            })
+        }
+    </script>
+}

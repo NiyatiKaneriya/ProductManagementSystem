@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<section class="container">
+
+    <h3 class="mb-3">Products</h3>
+    <a type="button" class="btn btn-info" asp-controller="Products" asp-action="ProductAddEdit">Add Products</a>
+    <div class="row">
+        <div class="form-floating col-md-4 w-25 mb-3">
+            <select class="form-control" id="categoryfilter" asp-items="@(new
+                     SelectList(@ViewBag.Category,"CategoryId","CategoryName"))">
+                <option value="0" selected>All</option>
+            </select>
+
+            <label for="floatingInput">Category</label>
+        </div>
+        <div class="input-group col-md-4 mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" class="form-control" id="generalSearch">
+        </div>
+        <div class="input-group col-md-4 mb-3">
+            <form action="" method="post">
+                <select data-placeholder="Begin typing a name to filter..." id="multiselect" asp-items="@(new
+                     SelectList(@ViewBag.Cities,"CityId","CityName"))" multiple class="chosen-select" name="test">
+                </select>
+
+            </form>
+        </div>
+        <div class="">
+            <strong>Select Language:</strong>
+            <select id="multiple-checkboxes" multiple="multiple">
+                <option value="php">PHP</option>
+                <option value="javascript">JavaScript</option>
+                <option value="java">Java</option>
+                <option value="sql">SQL</option>
+                <option value="jquery">Jquery</option>
+                <option value=".net">.Net</option>
+            </select>
+        </div>
+
+    <div id="productList">
+    </div>
+    @* <partial name="_ProductsList" /> *@
+</section>
+
+
+@section Scripts{
+   
+    <script>
+
+        $(document).ready(function () {
+            $('#multiple-checkboxes').multiselect({
+                includeSelectAllOption: true,
+            });
+        });
+        var generalSearch = $('#generalSearch').val();
+        var multiselectlist = $('#multiselect').val();
+        function CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, sorttype, page, firstLoad) {
+            var categoryId = GetParameterValues('CategoryId')
+            if (categoryId && firstLoad) {
+                document.getElementById('categoryfilter').value = categoryId;
+                categoryfilter = categoryId;
+            }
+
+            console.log(window.location.href);
+            $.ajax({
+                url: '/Products/GetProductsByFilter',
+                data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page },
+                success: function (response) {
+                    $('#productList').html(response);
+
+                    sortTypeIconVisiblity(columnName, sorttype);
+
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            })
+        }
+
+        function sortTypeIconVisiblity(columnName, sortType) {
+
+            if (columnName) {
+                var idup = "#up-" + columnName;
+                var iddown = "#down-" + columnName;
+                if (sortType == "Asce") {
+                    $(idup).show();
+                    $(iddown).hide();
+                } else {
+                    $(idup).hide();
+                    $(iddown).show();
+                }
+            }
+        }
+
+
+        function GetParameterValues(param) {
+            var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+            for (var i = 0; i < url.length; i++) {
+                var urlparam = url[i].split('=');
+                if (urlparam[0] == param) {
+                    return urlparam[1];
+                }
+            }
+        }
+
+        function filterDataPagination(page) {
+            categoryfilter = $('#categoryfilter').val();
+            generalSearch = $('#generalSearch').val();
+            multiselectlist = $('#multiselect').val();
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", page);
+        }
+        $('#multiselect').on('change', function () {
+            multiselectlist = $('#multiselect').val();
+            categoryfilter = $('#categoryfilter').val();
+            generalSearch = $('#generalSearch').val();
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1);
+        });
+        $('#generalSearch').on('input', function () {
+            multiselectlist = $('#multiselect').val();
+            categoryfilter = $('#categoryfilter').val();
+            generalSearch = $('#generalSearch').val();
+
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1);
+        });
+        $('#categoryfilter').on('change', function () {
+            categoryfilter = $('#categoryfilter').val();
+            multiselectlist = $('#multiselect').val();
+            generalSearch = $('#generalSearch').val();
+
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1);
+        });
+        $(document).ready(function () {
+            CategoryFilter(0, "", [], "ProductId", "Asce", 1, true);
+        });
+        function sortcolumn(columnName, ascendingSort) {
+            categoryfilter = $('#categoryfilter').val();
+            multiselectlist = $('#multiselect').val();
+            generalSearch = $('#generalSearch').val();
+            if (ascendingSort) {
+                CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Asce", 1);
+            } else {
+                CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Desc", 1);
+            }
+        }
+
+       
+
+    </script>
+}

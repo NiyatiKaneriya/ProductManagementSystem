@@ -1,0 +1,71 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model ProductManagement.Entities.ViewModels.CategoryAddEdit
+<section class="mt-5">
+
+    <h3 class="mb-3">Add Category</h3>
+
+    <form class="row" asp-action="AddEditCategory" asp-controller="Category" id="categoryform">
+        <div class="my-3">Add category name and sequence for ordering it</div>
+        <div class="col-6">
+            <input hidden asp-for="CategoryId" />
+            <div class="form-floating mb-3">
+                <input type="text" asp-for="CategoryName" class="form-control" id="CategoryName" placeholder="Enter Category here....">
+                <label for="floatingInput">Category Name</label>
+                <span class="text-danger" id="CategoryNameerror"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="number" asp-for="Sequence" class="form-control" id="Sequence" placeholder="Enter sequence here....">
+                <label for="floatingInput">Sequence</label>
+                <span class="text-danger" id="Sequenceerror"></span>
+            </div>
+
+            <input type="submit" onclick="validateForm()" class="btn btn-info" />
+            <a class="btn btn-outline-info" asp-action="Index" asp-controller="Category">Cancel</a>
+        </div>
+    </form>
+
+
+</section>
+
+@section Scripts{
+    <script>
+       
+        function validateForm() {
+            const CategoryName =
+                document.getElementById("CategoryName").value;
+            const Sequence =
+                document.getElementById("Sequence").value;
+
+            const CategoryNameerror =
+                document.getElementById("CategoryNameerror");
+            const Sequenceerror = document.getElementById("Sequenceerror");
+
+
+            CategoryNameerror.textContent = "";
+            Sequenceerror.textContent = "";
+    
+            let isValid = true;
+
+            if (CategoryName === "" || /\d/.test(name)) {
+                CategoryNameerror.textContent = "Please enter Category name properly.";
+                isValid = false;
+            }
+
+            if (Sequence === "") {
+                Sequenceerror.textContent =
+                    "Please enter your sequence.";
+                isValid = false;
+            }
+
+            if (isValid == false) {
+                event.preventDefault();
+            }
+            return isValid;
+}
+    </script>
+                
+}
