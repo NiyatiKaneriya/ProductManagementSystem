@@ -29,19 +29,19 @@ namespace ProductManagement.Controllers
         }
         public IActionResult GetProductsByFilter(int categoryfilter, string generalSearch, string multiselectlist, string columnName, string sorttype, int page = 1, int pageSize = 5)
         {
-            
-                ViewBag.CategoryId = null;
-                int totalCount = _productsRepository.GetAllProductsCount(categoryfilter, generalSearch, multiselectlist);
-                int totalpages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-                ProductAddEdit data = new ProductAddEdit
-                {
-                    Products = _productsRepository.GetAllProducts(categoryfilter, generalSearch, multiselectlist, columnName, sorttype, page, pageSize)
-                };
-                ViewBag.TotalPages = totalpages;
-                ViewBag.CurrentPage = page;
-                return PartialView("_ProductsList", data);
-            
+            ViewBag.CategoryId = null;
+            int totalCount = _productsRepository.GetAllProductsCount(categoryfilter, generalSearch, multiselectlist);
+            int totalpages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            ProductAddEdit data = new ProductAddEdit
+            {
+                Products = _productsRepository.GetAllProducts(categoryfilter, generalSearch, multiselectlist, columnName, sorttype, page, pageSize)
+            };
+            ViewBag.TotalPages = totalpages;
+            ViewBag.CurrentPage = page;
+            return PartialView("_ProductsList", data);
+
         }
         public IActionResult ProductAddEdit(int? ProductId)
         {
@@ -64,8 +64,7 @@ namespace ProductManagement.Controllers
             {
                 _notyf.Error("procduct not added ...");
             }
-            
-            
+
             return RedirectToAction("Index");
         }
         public IActionResult DeleteProduct(int ProductId)

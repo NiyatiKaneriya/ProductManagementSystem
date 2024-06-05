@@ -5,41 +5,34 @@
 <section class="container">
 
     <h3 class="mb-3">Products</h3>
-    <a type="button" class="btn btn-info" asp-controller="Products" asp-action="ProductAddEdit">Add Products</a>
+    <a type="button" class="btn btn-info my-3" asp-controller="Products" asp-action="ProductAddEdit">Add Products</a>
     <div class="row">
-        <div class="form-floating col-md-4 w-25 mb-3">
+        <div class="form-floating col-md-3 w-25 mb-3">
             <select class="form-control" id="categoryfilter" asp-items="@(new
                      SelectList(@ViewBag.Category,"CategoryId","CategoryName"))">
-                <option value="0" selected>All</option>
+                <option value="0" selected>All category</option>
             </select>
 
             <label for="floatingInput">Category</label>
         </div>
-        <div class="input-group col-md-4 mb-3">
-            <span class="input-group-text" id="inputGroup-sizing-default"><i class="fa-solid fa-magnifying-glass"></i></span>
-            <input type="text" class="form-control" id="generalSearch">
+        <div class=" form-floating col-md-3 w-25 mb-3">
+            
+            <input type="text" class="form-control" placeholder="search here...." id="generalSearch">
+            <label for="floatingInput " >Search </label>
         </div>
-        <div class="input-group col-md-4 mb-3">
-            <form action="" method="post">
-                <select data-placeholder="Begin typing a name to filter..." id="multiselect" asp-items="@(new
-                     SelectList(@ViewBag.Cities,"CityId","CityName"))" multiple class="chosen-select" name="test">
-                </select>
+      
 
-            </form>
-        </div>
-        <div class="">
-            <strong>Select Language:</strong>
-            <select id="multiple-checkboxes" multiple="multiple">
-                <option value="php">PHP</option>
-                <option value="javascript">JavaScript</option>
-                <option value="java">Java</option>
-                <option value="sql">SQL</option>
-                <option value="jquery">Jquery</option>
-                <option value=".net">.Net</option>
+        <div class="form-floating w-100  col-md-3 mb-3">
+            <select id="multiselect" multiple="multiple" asp-items="@(new
+                     SelectList(@ViewBag.Cities,"CityId","CityName"))" class="form-select chosen-select" name="test">
+               
             </select>
+            
         </div>
-
-    <div id="productList">
+       
+        @* <a class="btn btn-outline-info col-md-3 mb-3 p-3" asp-action="Index" asp-controller="Products">Reset Filters</a> *@
+    </div>
+        <div id="productList">
     </div>
     @* <partial name="_ProductsList" /> *@
 </section>
@@ -50,12 +43,12 @@
     <script>
 
         $(document).ready(function () {
-            $('#multiple-checkboxes').multiselect({
-                includeSelectAllOption: true,
-            });
+            $('#multiselect').multiselect({ showSelectedValues: true });
         });
+        
         var generalSearch = $('#generalSearch').val();
         var multiselectlist = $('#multiselect').val();
+        
         function CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, sorttype, page, firstLoad) {
             var categoryId = GetParameterValues('CategoryId')
             if (categoryId && firstLoad) {
@@ -63,15 +56,13 @@
                 categoryfilter = categoryId;
             }
 
-            console.log(window.location.href);
+            
             $.ajax({
                 url: '/Products/GetProductsByFilter',
                 data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page },
                 success: function (response) {
                     $('#productList').html(response);
-
                     sortTypeIconVisiblity(columnName, sorttype);
-
                 },
                 error: function (e) {
                     console.log(e);
@@ -93,7 +84,6 @@
                 }
             }
         }
-
 
         function GetParameterValues(param) {
             var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
@@ -144,8 +134,5 @@
                 CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Desc", 1);
             }
         }
-
-       
-
     </script>
 }

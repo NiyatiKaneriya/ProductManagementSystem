@@ -19,6 +19,12 @@ namespace ProductManagement.Repositories
             _context = context;
         }
 
+        #region Add And Edit category
+        /// <summary>
+        /// Add and Edit Category
+        /// </summary>
+        /// <param name="categoryAddEdit"></param>
+        /// <returns></returns>
         public bool AddEditCategory(CategoryAddEdit categoryAddEdit)
         {
             try
@@ -38,6 +44,13 @@ namespace ProductManagement.Repositories
             }
 
         }
+        #endregion
+
+        #region Generic Function for Insert or Update Category
+        /// <summary>
+        /// Generic Function for Insert or Update Category
+        /// </summary>
+        /// <param name="category"></param>
         public void InsertOrUpdateCategory(Category category)
         {
             try
@@ -61,6 +74,15 @@ namespace ProductManagement.Repositories
             }
 
         }
+        #endregion
+
+
+        #region Delete Category
+        /// <summary>
+        /// Delete category only if no products are avilable in this category
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
         public bool DeleteCategory(int categoryId)
         {
             try
@@ -85,7 +107,12 @@ namespace ProductManagement.Repositories
             }
 
         }
-
+        #endregion
+        #region Get All Category for displaing category List
+        /// <summary>
+        /// Get All Category for displaing category List
+        /// </summary>
+        /// <returns></returns>
         public List<CategoryAddEdit> GetAllCategories()
         {
             try
@@ -108,7 +135,13 @@ namespace ProductManagement.Repositories
             }
 
         }
-
+        #endregion
+        #region GetCategoryDetails for edit category
+        /// <summary>
+        /// GetCategoryDetails for edit category
+        /// </summary>
+        /// <param name="CategoryId"></param>
+        /// <returns></returns>
         public CategoryAddEdit GetCategoryDetails(int CategoryId)
         {
             try
@@ -129,6 +162,6 @@ namespace ProductManagement.Repositories
             }
 
         }
-
+        #endregion
     }
 }

@@ -60,7 +60,7 @@ namespace ProductManagement.Controllers
             }
             else
             {
-                _notyf.Error("Category not deteled... check for products in this category");
+                _notyf.Error("Category not deteled... there are some products in this category ");
             }
            
             return RedirectToAction("Index");

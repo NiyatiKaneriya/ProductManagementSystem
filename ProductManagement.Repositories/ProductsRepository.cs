@@ -172,11 +172,13 @@ namespace ProductManagement.Repositories
                 List<ProductAddEdit> products = (from product in _context.Products
                                                  where (!product.IsDeleted
                                                  && (product.CategoryId == categoryfilter || categoryfilter == 0)
-                                                 && (generalSearch == null || product.ProductName.ToLower().Contains(generalSearch.ToLower())
+                                                 && (generalSearch == null || (product.ProductName.ToLower().Contains(generalSearch.ToLower())
                                                  || product.SupplierName.ToLower().Contains(generalSearch.ToLower())
                                                  || product.ProductDescription.ToLower().Contains(generalSearch.ToLower())
                                                  || product.SupplierEmail.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.ProductWebsite.ToLower().Contains(generalSearch.ToLower())))
+                                                 || product.ProductWebsite.ToLower().Contains(generalSearch.ToLower()))
+                                                 || product.Price.ToString().Contains(generalSearch)
+                                                 || product.AvailableFrom.ToString().Contains(generalSearch)))
                                                  select new ProductAddEdit
                                                  {
                                                      ProductId = product.ProductId,
@@ -260,11 +262,14 @@ namespace ProductManagement.Repositories
                 List<ProductAddEdit> products = (from product in _context.Products
                                                  where (!product.IsDeleted
                                                  && (product.CategoryId == categoryfilter || categoryfilter == 0)
-                                                 && (generalSearch == null || product.ProductName.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.SupplierName.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.ProductDescription.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.SupplierEmail.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.ProductWebsite.ToLower().Contains(generalSearch.ToLower())))
+                                                 && (generalSearch == null || 
+                                                 (product.ProductName.ToLower().Contains(generalSearch.ToLower())
+                                                    || product.SupplierName.ToLower().Contains(generalSearch.ToLower())
+                                                    || product.ProductDescription.ToLower().Contains(generalSearch.ToLower())
+                                                    || product.SupplierEmail.ToLower().Contains(generalSearch.ToLower())
+                                                    || product.ProductWebsite.ToLower().Contains(generalSearch.ToLower()))
+                                                    || product.Price.ToString().Contains(generalSearch)
+                                                    || product.AvailableFrom.ToString().Contains(generalSearch)))
                                                  select new ProductAddEdit
                                                  {
                                                      ProductId = product.ProductId,
