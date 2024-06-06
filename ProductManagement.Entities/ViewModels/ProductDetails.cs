@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ProductManagement.Entities.ViewModels
 {
-    public class ProductAddEdit
+    public class ProductDetails
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; }
@@ -30,7 +30,7 @@ namespace ProductManagement.Entities.ViewModels
         public string FilePath { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
-        public List<ProductAddEdit> Products { get; set; }
+        public List<ProductDetails> Products { get; set; }
 
         public bool AcendingSort { get; set; }
 

@@ -14,6 +14,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ProductManagement.Repositories
 {
+    
     public class ProductsRepository : IProductsRepository
     {
         private readonly ApplicationDbContext _context;
@@ -29,15 +30,24 @@ namespace ProductManagement.Repositories
         /// <param name="model"></param>
         /// <param name="ProductId"></param>
         /// <returns></returns>
-        public bool UploadProductImage(ProductAddEdit model, int ProductId)
+        public bool UploadProductImage(ProductDetails model, int ProductId)
         {
 
             if (model.ProductImage != null)
             {
                 string FilePath = "wwwroot\\UploadedProductImage\\" + ProductId;
                 string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
-                if (!Directory.Exists(path))
+                if (Directory.Exists(path))
+                {
+                    Directory.Delete(path,true);
                     Directory.CreateDirectory(path);
+                }
+                else
+                {
+                    Directory.CreateDirectory(path);
+                }
+                   
+                
                 if (model.ProductImage != null)
                 {
                     string newfilename = $"{"ProductIamge"}.{Path.GetExtension(model.ProductImage.FileName).Trim('.')}";
@@ -63,12 +73,13 @@ namespace ProductManagement.Repositories
         #endregion
 
         #region Add Edit Product
+
         /// <summary>
-        /// Add and Edit Product details
+        /// Adds the edit product.
         /// </summary>
-        /// <param name="productAddEdit"></param>
+        /// <param name="productAddEdit">The product add edit.</param>
         /// <returns></returns>
-        public bool AddEditProduct(ProductAddEdit productAddEdit)
+        public bool AddEditProduct(ProductDetails productAddEdit)
         {
             try
             {
@@ -92,14 +103,18 @@ namespace ProductManagement.Repositories
             }
             catch (Exception ex)
             {
-                return false;
-                //throw ex;
+
+                throw ex;
             }
 
 
         }
         #endregion
 
+        /// <summary>
+        /// Inserts the or update.
+        /// </summary>
+        /// <param name="product">The product.</param>
         public void InsertOrUpdate(Product product)
         {
             try
@@ -124,17 +139,18 @@ namespace ProductManagement.Repositories
         }
 
         #region Product detail for edit product
+
         /// <summary>
-        /// Product detail for edit product
+        /// Gets the product detail.
         /// </summary>
-        /// <param name="ProductId"></param>
+        /// <param name="ProductId">The product identifier.</param>
         /// <returns></returns>
-        public ProductAddEdit GetProductDetail(int ProductId)
+        public ProductDetails GetProductDetail(int ProductId)
         {
             try
             {
                 Product product = _context.Products.First(e => e.ProductId == ProductId);
-                ProductAddEdit productAddEdit = new ProductAddEdit
+                ProductDetails productAddEdit = new ProductDetails
                 {
                     ProductId = ProductId,
                     ProductName = product.ProductName,
@@ -161,25 +177,33 @@ namespace ProductManagement.Repositories
         #endregion
 
         #region Productlist for display table
+
         /// <summary>
-        /// Productlist for display table
+        /// Gets all products.
         /// </summary>
+        /// <param name="categoryfilter">The categoryfilter.</param>
+        /// <param name="generalSearch">The general search.</param>
+        /// <param name="multiselect">The multiselect.</param>
+        /// <param name="columnName">Name of the column.</param>
+        /// <param name="sorttype">The sorttype.</param>
+        /// <param name="page">The page.</param>
+        /// <param name="pageSize">Size of the page.</param>
         /// <returns></returns>
-        public List<ProductAddEdit> GetAllProducts(int categoryfilter, string generalSearch, string multiselect, string columnName, string sorttype, int page = 1, int pageSize = 5)
+        public List<ProductDetails> GetAllProducts(ProductListParams listParams)
         {
             try
             {
-                List<ProductAddEdit> products = (from product in _context.Products
-                                                 where (!product.IsDeleted
-                                                 && (product.CategoryId == categoryfilter || categoryfilter == 0)
-                                                 && (generalSearch == null || (product.ProductName.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.SupplierName.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.ProductDescription.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.SupplierEmail.ToLower().Contains(generalSearch.ToLower())
-                                                 || product.ProductWebsite.ToLower().Contains(generalSearch.ToLower()))
-                                                 || product.Price.ToString().Contains(generalSearch)
-                                                 || product.AvailableFrom.ToString().Contains(generalSearch)))
-                                                 select new ProductAddEdit
+                List<ProductDetails> products = (from product in _context.Products
+                                                 where (!product.DeletedAt.HasValue
+                                                 && (product.CategoryId == listParams.Categoryfilter || listParams.Categoryfilter == 0)
+                                                 && (listParams.GeneralSearch == null || (product.ProductName.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                 || product.SupplierName.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                 || product.ProductDescription.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                 || product.SupplierEmail.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                 || product.ProductWebsite.ToLower().Contains(listParams.GeneralSearch.ToLower()))
+                                                 || product.Price.ToString().Contains(listParams.GeneralSearch)
+                                                 || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch)))
+                                                 select new ProductDetails
                                                  {
                                                      ProductId = product.ProductId,
                                                      ProductName = product.ProductName,
@@ -196,9 +220,9 @@ namespace ProductManagement.Repositories
                                                      FilePath = product.FilePath,
                                                      AvailableAtIds = product.AvailableAt,
                                                  }).ToList();
-                if (!string.IsNullOrWhiteSpace(multiselect))
+                if (!string.IsNullOrWhiteSpace(listParams.Multiselectlist))
                 {
-                    List<int> availableCities = multiselect.Split(',').Select(int.Parse).ToList();
+                    List<int> availableCities = listParams.Multiselectlist.Split(',').Select(int.Parse).ToList();
                     products = (from pro in products.Where(a => !string.IsNullOrWhiteSpace(a.AvailableAt))
                                 let sadf = pro.AvailableAt.Split(",").Select(int.Parse).ToList()
                                 where sadf.Any(availableCities.Contains)
@@ -207,18 +231,18 @@ namespace ProductManagement.Repositories
                 }
 
                 List<City> cities = _context.Cities.ToList();
-                foreach (ProductAddEdit item in products)
+                foreach (ProductDetails item in products)
                 {
                     List<int> cityIds = item.AvailableAtIds.Split(',').Select(int.Parse).ToList();
                     List<string> availablecities = cities.Where(e => cityIds.Contains(e.CityId)).Select(e => e.CityName).ToList();
                     item.AvailableAt = string.Join(",", availablecities);
                 }
 
-                List<ProductAddEdit> orderdlist = new List<ProductAddEdit>();
+                List<ProductDetails> orderdlist = new List<ProductDetails>();
 
-                if (sorttype == "Asce")
+                if (listParams.Sorttype == "Asce")
                 {
-                    orderdlist = columnName switch
+                    orderdlist = listParams.ColumnName switch
                     {
                         "ProductId" => products.OrderBy(c => c.ProductId).ToList(),
                         "ProductName" => products.OrderBy(c => c.ProductName).ToList(),
@@ -232,7 +256,7 @@ namespace ProductManagement.Repositories
                 }
                 else
                 {
-                    orderdlist = columnName switch
+                    orderdlist = listParams.ColumnName switch
                     {
                         "ProductId" => products.OrderByDescending(c => c.ProductId).ToList(),
                         "ProductName" => products.OrderByDescending(c => c.ProductName).ToList(),
@@ -245,8 +269,8 @@ namespace ProductManagement.Repositories
                     };
                 }
 
-                List<ProductAddEdit> distinctItems = orderdlist.GroupBy(x => x.ProductId).Select(y => y.First()).ToList();
-                List<ProductAddEdit> paginatedData = distinctItems.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                List<ProductDetails> distinctItems = orderdlist.GroupBy(x => x.ProductId).Select(y => y.First()).ToList();
+                List<ProductDetails> paginatedData = distinctItems.Skip((listParams.Page - 1) * listParams.PageSize).Take(listParams.PageSize).ToList();
                 return paginatedData;
             }
             catch (Exception ex)
@@ -254,30 +278,38 @@ namespace ProductManagement.Repositories
                 throw ex;
             }
         }
-        public int GetAllProductsCount(int categoryfilter, string generalSearch, string multiselect)
+
+        /// <summary>
+        /// Gets all products count.
+        /// </summary>
+        /// <param name="categoryfilter">The categoryfilter.</param>
+        /// <param name="generalSearch">The general search.</param>
+        /// <param name="multiselect">The multiselect.</param>
+        /// <returns></returns>
+        public int GetAllProductsCount(ProductListParams listParams)
         {
             try
             {
 
-                List<ProductAddEdit> products = (from product in _context.Products
-                                                 where (!product.IsDeleted
-                                                 && (product.CategoryId == categoryfilter || categoryfilter == 0)
-                                                 && (generalSearch == null || 
-                                                 (product.ProductName.ToLower().Contains(generalSearch.ToLower())
-                                                    || product.SupplierName.ToLower().Contains(generalSearch.ToLower())
-                                                    || product.ProductDescription.ToLower().Contains(generalSearch.ToLower())
-                                                    || product.SupplierEmail.ToLower().Contains(generalSearch.ToLower())
-                                                    || product.ProductWebsite.ToLower().Contains(generalSearch.ToLower()))
-                                                    || product.Price.ToString().Contains(generalSearch)
-                                                    || product.AvailableFrom.ToString().Contains(generalSearch)))
-                                                 select new ProductAddEdit
+                List<ProductDetails> products = (from product in _context.Products
+                                                 where (!product.DeletedAt.HasValue
+                                                 && (product.CategoryId == listParams.Categoryfilter || listParams.Categoryfilter == 0)
+                                                 && (listParams.GeneralSearch == null ||
+                                                 (product.ProductName.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                    || product.SupplierName.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                    || product.ProductDescription.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                    || product.SupplierEmail.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                    || product.ProductWebsite.ToLower().Contains(listParams.GeneralSearch.ToLower()))
+                                                    || product.Price.ToString().Contains(listParams.GeneralSearch)
+                                                    || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch)))
+                                                 select new ProductDetails
                                                  {
                                                      ProductId = product.ProductId,
                                                      AvailableAt = product.AvailableAt,
                                                  }).ToList();
-                if (!string.IsNullOrWhiteSpace(multiselect))
+                if (!string.IsNullOrWhiteSpace(listParams.Multiselectlist))
                 {
-                    List<int> availableCities = multiselect.Split(',').Select(int.Parse).ToList();
+                    List<int> availableCities = listParams.Multiselectlist.Split(',').Select(int.Parse).ToList();
                     products = (from pro in products.Where(a => !string.IsNullOrWhiteSpace(a.AvailableAt))
                                 let sadf = pro.AvailableAt.Split(",").Select(int.Parse).ToList()
                                 where sadf.Any(availableCities.Contains)
@@ -298,17 +330,18 @@ namespace ProductManagement.Repositories
         #endregion
 
         #region Delete Product
+
         /// <summary>
-        /// Delete Product
+        /// Deletes the product.
         /// </summary>
-        /// <param name="ProductId"></param>
+        /// <param name="ProductId">The product identifier.</param>
         /// <returns></returns>
         public bool DeleteProduct(int ProductId)
         {
             try
             {
                 Product product = _context.Products.First(p => p.ProductId == ProductId);
-                product.IsDeleted = true;
+                product.DeletedAt = DateTime.Now;
                 InsertOrUpdate(product);
                 return true;
             }
@@ -320,8 +353,9 @@ namespace ProductManagement.Repositories
         #endregion
 
         #region GetCities
+
         /// <summary>
-        /// return List of cities
+        /// Gets the cites.
         /// </summary>
         /// <returns></returns>
         public List<City> GetCites()

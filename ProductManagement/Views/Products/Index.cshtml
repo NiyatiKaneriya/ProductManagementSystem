@@ -16,39 +16,49 @@
             <label for="floatingInput">Category</label>
         </div>
         <div class=" form-floating col-md-3 w-25 mb-3">
-            
+
             <input type="text" class="form-control" placeholder="search here...." id="generalSearch">
-            <label for="floatingInput " >Search </label>
+            <label for="floatingInput ">Search </label>
         </div>
-      
+
 
         <div class="form-floating w-100  col-md-3 mb-3">
             <select id="multiselect" multiple="multiple" asp-items="@(new
                      SelectList(@ViewBag.Cities,"CityId","CityName"))" class="form-select chosen-select" name="test">
-               
             </select>
-            
+
         </div>
-       
+        <form>
+            <input hidden />
+        </form>
         @* <a class="btn btn-outline-info col-md-3 mb-3 p-3" asp-action="Index" asp-controller="Products">Reset Filters</a> *@
     </div>
-        <div id="productList">
+    <div id="productList">
     </div>
     @* <partial name="_ProductsList" /> *@
 </section>
 
 
 @section Scripts{
-   
+
     <script>
 
         $(document).ready(function () {
             $('#multiselect').multiselect({ showSelectedValues: true });
         });
-        
+        // const deletePopup = document.getElementById('deletePopup')
+        // console.log(deletePopup + "fdkpwrgobnrgwmv3rlevfbthmjy")
+        // if (deletePopup) {
+        //     deletePopup.addEventListener('show.bs.modal', event => {
+        //         const button = event.relatedTarget
+        //         const ProductId = button.getAttribute('data-bs-ProductId')
+        //         console.log(ProductId + "njcsd")
+        //         document.getElementById('ProductId').value = ProductId;
+        //     })
+        // }
         var generalSearch = $('#generalSearch').val();
         var multiselectlist = $('#multiselect').val();
-        
+
         function CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, sorttype, page, firstLoad) {
             var categoryId = GetParameterValues('CategoryId')
             if (categoryId && firstLoad) {
@@ -56,7 +66,7 @@
                 categoryfilter = categoryId;
             }
 
-            
+            console.log(multiselectlist);
             $.ajax({
                 url: '/Products/GetProductsByFilter',
                 data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page },
@@ -134,5 +144,7 @@
                 CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Desc", 1);
             }
         }
+
+        
     </script>
 }

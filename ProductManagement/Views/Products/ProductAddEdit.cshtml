@@ -6,63 +6,75 @@
 @{
     var Cities = ViewBag.Cities;
 }
-@model ProductManagement.Entities.ViewModels.ProductAddEdit
+@model ProductManagement.Entities.ViewModels.ProductDetails
 <section>
 
     <h3 class="mb-3">Add Products</h3>
 
     <form class="row" asp-action="AddEditProduct" onsubmit="validateForm()" asp-controller="Products" enctype="multipart/form-data" id="Productform">
-        <input hidden asp-for="ProductId" />
+        <input hidden asp-for="ProductId" id="ProductIdAddEdit" />
         <div class="form-floating col-md-6 mb-3">
-            <input asp-for="ProductName" type="text" class="form-control" id="ProductName" placeholder="Enter Category here....">
-            <label for="floatingInput">Product Name</label>
+            <input asp-for="ProductName" maxlength="50" type="text" class="form-control" id="ProductName" placeholder="Enter Category here....">
+            <label for="floatingInput">Product Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="ProductName-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
             <select asp-for="CategoryId" id="CategoryId" class="form-control" asp-items="@(new
                      SelectList(@ViewBag.Category,"CategoryId","CategoryName"))">
             </select>
-            
-            <label for="floatingInput">Category</label>
+
+            <label for="floatingInput">Category<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="CategoryId-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
-            <input asp-for="Price" type="number" class="form-control" id="Price" placeholder="Enter Price here....">
-            <label for="floatingInput">Price</label>
+            <input asp-for="Price" type="text" class="form-control" id="Price" placeholder="Enter Price here....">
+            <label for="floatingInput">Price<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="Price-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
-            <input asp-for="SupplierName" type="text" class="form-control" id="SupplierName" placeholder="Enter Supplier Name here....">
-            <label for="floatingInput">Supplier Name</label>
+            <input asp-for="SupplierName" maxlength="50" type="text" class="form-control" id="SupplierName" placeholder="Enter Supplier Name here....">
+            <label for="floatingInput">Supplier Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="SupplierName-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
-            <input asp-for="SupplierEmail" type="text" class="form-control" id="SupplierEmail" placeholder="Enter Supplier Email here....">
-            <label for="floatingInput">Supplier Email</label>
+            <input asp-for="SupplierEmail" pattern=".*\S+.*" maxlength="100" type="text" class="form-control" id="SupplierEmail" placeholder="Enter Supplier Email here....">
+            <label for="floatingInput">Supplier Email<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="SupplierEmail-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
-            <input asp-for="SupplierPhoneNo" type="tel" class="form-control" id="SupplierPhoneNo" placeholder="123-45-678" >
-            <label for="floatingInput">Supplier PhoneNo.</label>
+            <input asp-for="SupplierPhoneNo" maxlength="10" type="tel" class="form-control " id="SupplierPhoneNo" placeholder="123-45-678">
+            <label for="floatingInput">Supplier PhoneNo.<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="SupplierPhoneNo-error"></span>
         </div>
         <div class="form-floating col-md-12 mb-3">
-            <textarea asp-for="ProductDescription" class="form-control" placeholder="Enter Description of product here" id="ProductDescription" style="height: 100px"></textarea>
-            <label for="floatingInput">Description</label>
+            <textarea asp-for="ProductDescription" maxlength="256" class="form-control" placeholder="Enter Description of product here" id="ProductDescription" style="height: 100px"></textarea>
+            <label for="floatingInput">Description<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="ProductDescription-error"></span>
         </div>
-        <div class="form-floating col-md-6 mb-3">
-            <input asp-for="AvailableFrom" type="date" min="Date()" class="form-control" id="AvailableFrom" placeholder="">
-            <label for="floatingInput">Available From</label>
-            <span class="text-danger" id="AvailableFrom-error"></span>
-        </div>
+        @if (Model != null)
+        {
+            <div class="form-floating col-md-6 mb-3">
+                <input asp-for="AvailableFrom" type="date" class="form-control AvailableFrom" id="AvailableFrom" placeholder="">
+                <label for="floatingInput">Available From<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+                <span class="text-danger" id="AvailableFrom-error"></span>
+            </div>
+        }
+        else
+        {
+            <div class="form-floating col-md-6 mb-3">
+                <input asp-for="AvailableFrom" type="date" min="Date()" class="form-control AvailableFrommin" id="AvailableFrom" placeholder="">
+                <label for="floatingInput">Available From<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+                <span class="text-danger" id="AvailableFrom-error"></span>
+            </div>
+        }
+
         <div class="form-floating col-md-6 mb-3">
             <input asp-for="ProductWebsite" type="text" class="form-control" id="ProductWebsite" placeholder="Enter Product Website here....">
-            <label for="floatingInput">Product Website</label>
+            <label for="floatingInput">Product Website<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="ProductWebsite-error"></span>
         </div>
         <div class="form-floating d-flex gap-3 col-md-6 mb-3">
-            <p>Is Active Product? </p>
+            <p>Is Active Product? <i class="fa-solid fa-asterisk text-danger px-2 small"></i></p>
             <div class="d-flex gap-2">
                 <div class="form-check">
                     <input asp-for="IsActive" class="form-check-input" value="true" type="radio" name="IsActive" id="flexRadioDefault1" checked>
@@ -80,17 +92,17 @@
             <span class="text-danger" id="IsActive-error"></span>
         </div>
         <div class="form-floating d-flex gap-3 col-md-6 mb-3">
-            <p>Products Available at : </p>
+            <p>Products Available at : <i class="fa-solid fa-asterisk text-danger px-2 small"></i></p>
             <input hidden asp-for="AvailableAt" id="AvailableAt" />
-            <input hidden  id="AvailableAtcity" />
+            <input hidden id="AvailableAtcity" />
             <div class="d-flex gap-2 flex-wrap">
-              
+
                 @foreach (var city in Cities)
                 {
-                    @if(Model == null)
+                    @if (Model == null)
                     {
                         <div class="form-check mx-2">
-                            <input class="form-check-input" value="@city.CityId" type="checkbox" name="Checkbox" >
+                            <input class="form-check-input" value="@city.CityId" type="checkbox" name="Checkbox">
                             <label class="form-check-label" for="flexCheckDefault">
                                 @city.CityName
                             </label>
@@ -117,7 +129,7 @@
                             </div>
                         }
                     }
-                    
+
 
 
                 }
@@ -125,47 +137,66 @@
             </div>
         </div>
         <div class=" col-md-6 mb-3">
-            <label for="formFile" class="form-label">Product image</label>
-            <input asp-for="ProductImage" class="form-control" type="file" id="formFile">
+            <label for="formFile" class="form-label">Product image<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+
+
+
+            <input asp-for="ProductImage" class="form-control formFile" type="file" id="formFile">
+
+
+
             <span class="text-danger" id="ProductImage-error"></span>
             <div class="d-flex">
                 @{
-                    if(Model  != null)
+                    if (Model != null)
                     {
                         if (Model.FilePath != null)
                         {
-                                        <img src="@Model.FilePath" height="200" width="200" />
+                            <img src="@Model.FilePath" id="photoimgdb" height="200" width="200" />
                         }
                     }
 
                     <img src="" id="photoimg" height="200" width="200" style="display:none" />
                 }
             </div>
-            
+
         </div>
         <div>
-            <input type="submit"  class="btn btn-primary" />
-            <a class="btn btn-outline-primary" asp-action="Index"  asp-controller="Products">Cancel</a>
+            <input type="submit" class="btn btn-info" />
+            <a class="btn btn-outline-info" asp-action="Index" asp-controller="Products">Cancel</a>
         </div>
     </form>
 
-    
+
 </section>
 @section Scripts{
     <script>
         $(document).ready(function () {
+            var inputField = document.getElementById('SupplierPhoneNo');
+            inputField.onkeydown = function (event) {
+                // Only allow if the e.key value is a number or if it's 'Backspace'
+                if (isNaN(event.key) && event.key !== 'Backspace') {
+                    event.preventDefault();
+                }
+            };
+            $('#Price').keypress(function (event) {
+                if (((event.which != 46 || (event.which == 46 && $(this).val() == '')) ||
+                    $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+                    event.preventDefault();
+                }
+            }).on('paste', function (event) {
+                event.preventDefault();
+            });
+            // Get today's date in the format YYYY-MM-DD
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = (today.getMonth() + 1).toString().padStart(2, '0');
+            var day = today.getDate().toString().padStart(2, '0');
+            var todayDate = `${year}-${month}-${day}`;
 
-           
-                // Get today's date in the format YYYY-MM-DD
-                var today = new Date();
-                var year = today.getFullYear();
-                var month = (today.getMonth() + 1).toString().padStart(2, '0');
-                var day = today.getDate().toString().padStart(2, '0');
-                var todayDate = `${year}-${month}-${day}`;
+            // Set the min attribute of the date input to today's date
+            $('.AvailableFrommin').attr('min', todayDate);
 
-                // Set the min attribute of the date input to today's date
-            $('#AvailableFrom').attr('min', todayDate);
-          
 
 
             let AvailableAt = $('input[name="Checkbox"]:checked').map(function () {
@@ -173,7 +204,7 @@
             }).get().join(',');
             $('#AvailableAt').val(AvailableAt);
         });
-        
+
         $('.form-check-input').change(function () {
             let AvailableAt = $('input[name="Checkbox"]:checked').map(function () {
                 return $(this).val();
@@ -181,7 +212,7 @@
             $('#AvailableAt').val(AvailableAt);
             console.log(AvailableAt);
         });
-         
+
         $('#formFile').change(function () {
             validateFileType();
             var fileName = $(this).val();
@@ -190,7 +221,7 @@
 
             reader.onload = function (event) {
                 var img = document.getElementById('photoimg');
-               
+
                 img.src = event.target.result;
                 img.style.display = 'block';
                 /* imgdb.style.display = 'none'; */// Show the image
@@ -199,14 +230,17 @@
             reader.readAsDataURL(file);
             //document.getElementById("getFilePhoto").textContent = this.files[0].name;
 
-            
+
             console.log(fileName);
             console.log('done');
         })
 
         function validateFileType() {
+            debugger
             console.log("inside filetype validation")
             var selectedFile = document.getElementById('formFile').files[0];
+
+
             var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
             const formFileerror =
                 document.getElementById("ProductImage-error");
@@ -216,13 +250,15 @@
                     "Please enter your valid file png , jpeg , jpg.";
 
                 document.getElementById('formFile').value = '';
+
             } else {
-                
+
                 formFileerror.textContent = "";
             }
         }
         function validateForm() {
-           
+
+
 
             let isValid = true;
 
@@ -231,7 +267,7 @@
             const ProductNameerror =
                 document.getElementById("ProductName-error");
             ProductNameerror.textContent = "";
-            if (ProductName === "" || /\d/.test(ProductName)) {
+            if (ProductName.trim() === "" || /\d/.test(ProductName)) {
                 ProductNameerror.textContent =
                     "Please enter your ProductName properly.";
                 isValid = false;
@@ -239,7 +275,7 @@
 
             const CategoryId =
                 document.getElementById("CategoryId").value;
-           
+
             const CategoryIderror =
                 document.getElementById("CategoryId-error");
             CategoryIderror.textContent = "";
@@ -251,11 +287,11 @@
 
             const Price =
                 document.getElementById("Price").value;
-            
+
             const Priceerror =
                 document.getElementById("Price-error");
             Priceerror.textContent = "";
-            if (Price === "") {
+            if (Price.trim() === "") {
                 Priceerror.textContent =
                     "Please enter your Price.";
                 isValid = false;
@@ -263,11 +299,11 @@
 
             const SupplierName =
                 document.getElementById("SupplierName").value;
-           
+
             const SupplierNameerror =
                 document.getElementById("SupplierName-error");
             SupplierNameerror.textContent = "";
-            if (SupplierName === "") {
+            if (SupplierName.trim() === "") {
                 SupplierNameerror.textContent =
                     "Please enter your SupplierName.";
                 isValid = false;
@@ -275,15 +311,15 @@
 
             const SupplierEmail =
                 document.getElementById("SupplierEmail").value;
-            
+           
             const SupplierEmailerror =
                 document.getElementById("SupplierEmail-error");
             SupplierEmailerror.textContent = "";
-            if (SupplierEmail === "") {
+            if (SupplierEmail.trim() === "") {
                 SupplierEmailerror.textContent =
                     "Please enter  email address.";
                 isValid = false;
-            } else if(!SupplierEmail.includes("@@")) {
+            } else if (!SupplierEmail.includes("@@")) {
 
                 SupplierEmailerror.textContent =
                     "Please enter a valid email address format.";
@@ -291,31 +327,31 @@
             }
             const SupplierPhoneNo =
                 document.getElementById("SupplierPhoneNo").value.trim();
-           
+
             const SupplierPhoneNoerror =
                 document.getElementById("SupplierPhoneNo-error");
             SupplierPhoneNoerror.textContent = "";
             const pattern = /^\d{10}$/;
             if (!pattern.test(SupplierPhoneNo)) {
-                
+
                 SupplierPhoneNoerror.textContent =
                     "Please enter your Supplier PhoneNo. 10 digits only";
                 isValid = false;
             }
             const ProductDescription =
                 document.getElementById("ProductDescription").value;
-          
+
             const ProductDescriptionerror =
                 document.getElementById("ProductDescription-error");
             ProductDescriptionerror.textContent = "";
-            if (ProductDescription === "") {
+            if (ProductDescription.trim() === "") {
                 ProductDescriptionerror.textContent =
                     "Please enter your Description.";
                 isValid = false;
             }
             const AvailableFrom =
                 document.getElementById("AvailableFrom").value;
-            
+
             const AvailableFromerror =
                 document.getElementById("AvailableFrom-error");
             AvailableFromerror.textContent = "";
@@ -329,8 +365,8 @@
             const ProductWebsiteerror =
                 document.getElementById("ProductWebsite-error");
             ProductWebsiteerror.textContent = "";
-            
-            if (ProductWebsite === "") {
+
+            if (ProductWebsite.trim() === "") {
                 ProductWebsiteerror.textContent =
                     "Please enter website .";
                 isValid = false;
@@ -361,14 +397,15 @@
                     "Please enter your city.";
                 isValid = false;
             }
-
+            const ProductId = document.getElementById("ProductIdAddEdit").value
             const formFile =
                 document.getElementById("formFile").value;
+            debugger
             const formFileerror =
                 document.getElementById("ProductImage-error");
             formFileerror.textContent = "";
             validateFileType();
-            if (formFile === "") {
+            if (formFile === "" && ProductId == "") {
                 formFileerror.textContent =
                     "Please enter your image.";
                 isValid = false;
@@ -377,8 +414,8 @@
             if (isValid == false) {
                 event.preventDefault();
             }
-            
-            
+
+
             return isValid;
         }
     </script>

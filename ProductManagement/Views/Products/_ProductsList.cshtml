@@ -1,10 +1,9 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model ProductManagement.Entities.ViewModels.ProductAddEdit
+@model ProductManagement.Entities.ViewModels.ProductDetails
 <style>
     .accordion-button:not(.collapsed)::after {
-       
         transform: rotate(-180deg);
     }
 </style>
@@ -134,8 +133,8 @@
         <tbody class="accordian accordion-flush">
             @foreach (var item in Model.Products)
             {
-                <tr class="accordion-item" >
-                    <td class="accordion-button collapsed"  data-toggle="collapse" data-target="#accordian-@item.ProductId" aria-expanded="false" aria-controls="accordian-@item.ProductId"> </td>
+                <tr class="accordion-item">
+                    <td class="accordion-button collapsed" data-toggle="collapse" data-target="#accordian-@item.ProductId" aria-expanded="false" aria-controls="accordian-@item.ProductId"> </td>
                     <td hidden>@item.ProductId</td>
                     <td>@item.ProductName</td>
                     <td>@item.Category</td>
@@ -148,16 +147,21 @@
                         }
                         @date
                     </td>
-
-
                     <td>
                         <a class="btn btn-outline-info" asp-action="ProductAddEdit" asp-controller="Products" asp-route-ProductId="@item.ProductId">Edit</a>
                         <a class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePopup" data-bs-ProductId="@item.ProductId">Delete</a>
                     </td>
 
                 </tr>
-                <tr class="accordion-collapse collapse" id="accordian-@item.ProductId" >
-                    <td colspan="1"> <img src="@item.FilePath" height="50" width="50" /> </td>
+                <tr class="accordion-collapse collapse" id="accordian-@item.ProductId">
+                    <td colspan="1">
+                        <div class="d-flex align-items-baseline">
+                            <img src="@item.FilePath" height="50" width="50" />
+                            <a class="px-3" download href="@item.FilePath"><i class="fa-solid fa-download"></i></a>
+                        </div>
+
+                    </td>
+
                     <td colspan="3"> <strong>Product description : </strong> @item.ProductDescription </td>
                     <td colspan="2"> <strong>Product Website :</strong>  @item.ProductWebsite  </td>
                     <td colspan="3"> <strong>Available At :</strong>  @item.AvailableAt  </td>
@@ -196,7 +200,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <form asp-action="DeleteProduct" asp-controller="Products">
-                    <input name="ProductId" id="ProductId" hidden />
+                    <input name="ProductId" id="ProductId" />
                     <button type="submit" class="btn  btn-danger">Delete</button>
                 </form>
 
@@ -204,18 +208,19 @@
         </div>
     </div>
 </div>
-@section Scripts{
+
     <script>
-      
-        const deletePopup = document.getElementById('deletePopup')
-        if (deletePopup) {
 
-            deletePopup.addEventListener('show.bs.modal', event => {
-                const button = event.relatedTarget
-                const ProductId = button.getAttribute('data-bs-ProductId')
-                document.getElementById('ProductId').value = ProductId;
 
-            })
-        }
-    </script>
-}
+    if (document.getElementById('deletePopup')) {
+        document.getElementById('deletePopup').addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget
+            const ProductId = button.getAttribute('data-bs-ProductId')
+            console.log(ProductId + "njcsd")
+            document.getElementById('ProductId').value = ProductId;
+        })
+    }
+</script>
+
+
+

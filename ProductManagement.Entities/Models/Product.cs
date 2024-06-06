@@ -38,8 +38,6 @@ public partial class Product
 
     public bool IsActive { get; set; }
 
-    public bool IsDeleted { get; set; }
-
     [Column(TypeName = "character varying")]
     public string AvailableAt { get; set; } = null!;
 
@@ -51,6 +49,9 @@ public partial class Product
 
     [Column(TypeName = "timestamp without time zone")]
     public DateTime? ModifiedDate { get; set; }
+
+    [Column(TypeName = "timestamp without time zone")]
+    public DateTime? DeletedAt { get; set; }
 
     [ForeignKey("CategoryId")]
     [InverseProperty("Products")]

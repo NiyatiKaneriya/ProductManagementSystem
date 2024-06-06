@@ -10,10 +10,10 @@ namespace ProductManagement.Repositories.Interfaces
 {
     public interface ICategoryRepository
     {
-        public bool AddEditCategory(CategoryAddEdit categoryAddEdit);
-        public List<CategoryAddEdit> GetAllCategories();
+        public bool AddEditCategory(CategoryDetails categoryAddEdit);
+        public List<CategoryDetails> GetAllCategories();
         public bool DeleteCategory(int categoryId);
-        public CategoryAddEdit GetCategoryDetails(int categoryId);
+        public CategoryDetails GetCategoryDetails(int categoryId);
 
     }
 }

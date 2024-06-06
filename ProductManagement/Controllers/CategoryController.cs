@@ -20,7 +20,7 @@ namespace ProductManagement.Controllers
         }
         public IActionResult Index()
         {
-            CategoryAddEdit data = new CategoryAddEdit
+            CategoryDetails data = new CategoryDetails
             {
                 Categories = _categoryRepository.GetAllCategories()
             };
@@ -34,20 +34,36 @@ namespace ProductManagement.Controllers
             }
             else
             {
-                CategoryAddEdit data = _categoryRepository.GetCategoryDetails(CategoryId.Value);
+                CategoryDetails data = _categoryRepository.GetCategoryDetails(CategoryId.Value);
                 return View(data);
             }
            
         }
-        public IActionResult AddEditCategory(CategoryAddEdit category)
+        public IActionResult AddEditCategory(CategoryDetails category)
         {
             if (_categoryRepository.AddEditCategory(category))
             {
-                _notyf.Success("Category Changes applied..");
+                if(category.CategoryId != default)
+                {
+                    _notyf.Success(Constant.CategoryEditSuccess);
+                }
+                else
+                {
+                    _notyf.Success(Constant.CategoryAddSuccess);
+                }
+                
             }
             else
             {
-                _notyf.Error("Changes not applied...");
+                if (category.CategoryId != default)
+                {
+                    _notyf.Error(Constant.CategoryEditError);
+                }
+                else
+                {
+                    _notyf.Error(Constant.CategoryAddError);
+                }
+               
             }
 
             return RedirectToAction("Index");
@@ -56,11 +72,11 @@ namespace ProductManagement.Controllers
         {
             if (_categoryRepository.DeleteCategory(CategoryId))
             {
-                _notyf.Success("Category deteled ..");
+                _notyf.Success(Constant.DeleteCategorySuccess);
             }
             else
             {
-                _notyf.Error("Category not deteled... there are some products in this category ");
+                _notyf.Error(Constant.DeleteCategoryError);
             }
            
             return RedirectToAction("Index");

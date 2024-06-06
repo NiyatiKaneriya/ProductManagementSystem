@@ -1,14 +1,8 @@
-﻿using ProductManagement.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ProductManagement.Entities.ViewModels
 {
-    public class CategoryAddEdit
+    public class CategoryDetails
     {
         public int? CategoryId { get; set; }
         [Required]
@@ -19,6 +13,6 @@ namespace ProductManagement.Entities.ViewModels
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set;}
         public bool? IsDeleted { get; set; }
-        public List<CategoryAddEdit>? Categories { get; set; }
+        public List<CategoryDetails>? Categories { get; set; }
     }
 }

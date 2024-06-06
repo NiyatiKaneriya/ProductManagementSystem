@@ -23,7 +23,8 @@ public partial class Category
     [Column(TypeName = "timestamp without time zone")]
     public DateTime? ModifiedDate { get; set; }
 
-    public bool IsDeleted { get; set; }
+    [Column(TypeName = "timestamp without time zone")]
+    public DateTime? DeletedAt { get; set; }
 
     [InverseProperty("Category")]
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();

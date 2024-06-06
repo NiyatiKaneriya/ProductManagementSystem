@@ -27,42 +27,59 @@ namespace ProductManagement.Controllers
             ViewBag.CategoryId = CategoryId;
             return View();
         }
-        public IActionResult GetProductsByFilter(int categoryfilter, string generalSearch, string multiselectlist, string columnName, string sorttype, int page = 1, int pageSize = 5)
+        public IActionResult GetProductsByFilter(ProductListParams listParams)
         {
 
             ViewBag.CategoryId = null;
-            int totalCount = _productsRepository.GetAllProductsCount(categoryfilter, generalSearch, multiselectlist);
-            int totalpages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            int totalCount = _productsRepository.GetAllProductsCount(listParams);
+            int totalpages = (int)Math.Ceiling(totalCount / (double)listParams.PageSize);
 
-            ProductAddEdit data = new ProductAddEdit
+            ProductDetails data = new ProductDetails
             {
-                Products = _productsRepository.GetAllProducts(categoryfilter, generalSearch, multiselectlist, columnName, sorttype, page, pageSize)
+                Products = _productsRepository.GetAllProducts(listParams)
             };
             ViewBag.TotalPages = totalpages;
-            ViewBag.CurrentPage = page;
+            ViewBag.CurrentPage = listParams.Page;
             return PartialView("_ProductsList", data);
 
         }
+
+
+
         public IActionResult ProductAddEdit(int? ProductId)
         {
             ViewBag.Category = _categoryRepository.GetAllCategories();
             ViewBag.Cities = _productsRepository.GetCites();
             if (ProductId.HasValue)
             {
-                ProductAddEdit data = _productsRepository.GetProductDetail(ProductId.Value);
+                ProductDetails data = _productsRepository.GetProductDetail(ProductId.Value);
                 return View(data);
             }
             return View();
         }
-        public IActionResult AddEditProduct(ProductAddEdit productAddEdit)
+        public IActionResult AddEditProduct(ProductDetails productAddEdit)
         {
             if (_productsRepository.AddEditProduct(productAddEdit))
             {
-                _notyf.Success("procduct added ...");
+                if (productAddEdit.ProductId != default)
+                {
+                    _notyf.Success(Constant.ProductEditSuccess);
+                }
+                else
+                {
+                    _notyf.Success(Constant.ProductAddSuccess);
+                }
             }
             else
             {
-                _notyf.Error("procduct not added ...");
+                if (productAddEdit.ProductId != default)
+                {
+                    _notyf.Error(Constant.ProductEditError);
+                }
+                else
+                {
+                    _notyf.Error(Constant.ProductAddError);
+                }
             }
 
             return RedirectToAction("Index");
@@ -71,11 +88,11 @@ namespace ProductManagement.Controllers
         {
             if (_productsRepository.DeleteProduct(ProductId))
             {
-                _notyf.Success("procduct deleted ...");
+                _notyf.Success(Constant.ProductDeleteSuccess);
             }
             else
             {
-                _notyf.Error("product not deleted ...");
+                _notyf.Error(Constant.ProductDeleteError);
             }
             return RedirectToAction("Index");
         }

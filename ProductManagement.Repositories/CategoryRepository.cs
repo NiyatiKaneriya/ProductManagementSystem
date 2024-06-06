@@ -2,11 +2,6 @@
 using ProductManagement.Entities.Models;
 using ProductManagement.Entities.ViewModels;
 using ProductManagement.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProductManagement.Repositories
 {
@@ -25,7 +20,7 @@ namespace ProductManagement.Repositories
         /// </summary>
         /// <param name="categoryAddEdit"></param>
         /// <returns></returns>
-        public bool AddEditCategory(CategoryAddEdit categoryAddEdit)
+        public bool AddEditCategory(CategoryDetails categoryAddEdit)
         {
             try
             {
@@ -63,7 +58,6 @@ namespace ProductManagement.Repositories
                 else
                 {
                     category.CreatedDate = DateTime.Now;
-                    category.IsDeleted = false;
                     _context.Categories.Add(category);
                 }
                 _context.SaveChanges();
@@ -95,7 +89,7 @@ namespace ProductManagement.Repositories
                 }
                 if (category != null && product.Count == 0)
                 {
-                    category.IsDeleted = true;
+                    category.DeletedAt = DateTime.Now;
                     InsertOrUpdateCategory(category);
                     return true;
                 }
@@ -113,14 +107,14 @@ namespace ProductManagement.Repositories
         /// Get All Category for displaing category List
         /// </summary>
         /// <returns></returns>
-        public List<CategoryAddEdit> GetAllCategories()
+        public List<CategoryDetails> GetAllCategories()
         {
             try
             {
-                List<CategoryAddEdit> data = (from c in _context.Categories
-                                              where !c.IsDeleted
+                List<CategoryDetails> data = (from c in _context.Categories
+                                              where !c.DeletedAt.HasValue
                                               orderby c.Sequence, c.CategoryId ascending
-                                              select new CategoryAddEdit
+                                              select new CategoryDetails
                                               {
                                                   CategoryId = c.CategoryId,
                                                   CategoryName = c.CategoryName,
@@ -142,12 +136,12 @@ namespace ProductManagement.Repositories
         /// </summary>
         /// <param name="CategoryId"></param>
         /// <returns></returns>
-        public CategoryAddEdit GetCategoryDetails(int CategoryId)
+        public CategoryDetails GetCategoryDetails(int CategoryId)
         {
             try
             {
                 Category categoryDetail = _context.Categories.Where(e => e.CategoryId == CategoryId).First();
-                CategoryAddEdit data = new CategoryAddEdit
+                CategoryDetails data = new CategoryDetails
                 {
                     CategoryId = categoryDetail.CategoryId,
                     CategoryName = categoryDetail.CategoryName,

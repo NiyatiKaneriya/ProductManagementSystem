@@ -3,7 +3,7 @@
 *@
 @{
 }
-@model ProductManagement.Entities.ViewModels.CategoryAddEdit
+@model ProductManagement.Entities.ViewModels.CategoryDetails
 <section class="mt-5">
 
     <h3 class="mb-3">Add Category</h3>
@@ -13,13 +13,13 @@
         <div class="col-6">
             <input hidden asp-for="CategoryId" />
             <div class="form-floating mb-3">
-                <input type="text" asp-for="CategoryName" class="form-control" id="CategoryName" placeholder="Enter Category here....">
-                <label for="floatingInput">Category Name</label>
+                <input type="text" asp-for="CategoryName" maxlength="50" class="form-control" id="CategoryName" placeholder="Enter Category here....">
+                <label for="floatingInput">Category Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
                 <span class="text-danger" id="CategoryNameerror"></span>
             </div>
             <div class="form-floating mb-3">
                 <input type="number" asp-for="Sequence" class="form-control" id="Sequence" placeholder="Enter sequence here....">
-                <label for="floatingInput">Sequence</label>
+                <label for="floatingInput">Sequence<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
                 <span class="text-danger" id="Sequenceerror"></span>
             </div>
 
@@ -33,8 +33,15 @@
 
 @section Scripts{
     <script>
-       
+        var inputField = document.getElementById('Sequence');
+        inputField.onkeydown = function (event) {
+            // Only allow if the e.key value is a number or if it's 'Backspace'
+            if (isNaN(event.key) && event.key !== 'Backspace') {
+                event.preventDefault();
+            }
+        };
         function validateForm() {
+            debugger
             const CategoryName =
                 document.getElementById("CategoryName").value;
             const Sequence =
@@ -50,7 +57,7 @@
     
             let isValid = true;
 
-            if (CategoryName === "" || /\d/.test(name)) {
+            if (CategoryName.trim() === "") {
                 CategoryNameerror.textContent = "Please enter Category name properly.";
                 isValid = false;
             }
