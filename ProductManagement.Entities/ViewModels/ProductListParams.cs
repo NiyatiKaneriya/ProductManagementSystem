@@ -14,6 +14,6 @@ namespace ProductManagement.Entities.ViewModels
         public string ColumnName { get; set; }
         public string Sorttype { get; set; }
         public int Page {  get; set; } = 1;
-        public int PageSize = 5;
+        public int PageSize { get; set; } 
     }
 }

@@ -13,28 +13,26 @@
                 <option value="0" selected>All category</option>
             </select>
 
-            <label for="floatingInput">Category</label>
+            <label for="floatingInput" style="padding-left : 25px;">Category</label>
         </div>
         <div class=" form-floating col-md-3 w-25 mb-3">
 
             <input type="text" class="form-control" placeholder="search here...." id="generalSearch">
-            <label for="floatingInput ">Search </label>
+            <label for="floatingInput " style="padding-left : 25px;">Search </label>
         </div>
 
 
         <div class="form-floating w-100  col-md-3 mb-3">
-            <select id="multiselect" multiple="multiple" asp-items="@(new
-                     SelectList(@ViewBag.Cities,"CityId","CityName"))" class="form-select chosen-select" name="test">
+            <select id="multiselect"  multiple="multiple" asp-items="@(new
+                     SelectList(@ViewBag.Cities,"CityId","CityName"))" class="form-select chosen-select w-100" name="test">
             </select>
 
         </div>
-        <form>
-            <input hidden />
-        </form>
-        @* <a class="btn btn-outline-info col-md-3 mb-3 p-3" asp-action="Index" asp-controller="Products">Reset Filters</a> *@
+      
     </div>
     <div id="productList">
     </div>
+    
     @* <partial name="_ProductsList" /> *@
 </section>
 
@@ -46,33 +44,25 @@
         $(document).ready(function () {
             $('#multiselect').multiselect({ showSelectedValues: true });
         });
-        // const deletePopup = document.getElementById('deletePopup')
-        // console.log(deletePopup + "fdkpwrgobnrgwmv3rlevfbthmjy")
-        // if (deletePopup) {
-        //     deletePopup.addEventListener('show.bs.modal', event => {
-        //         const button = event.relatedTarget
-        //         const ProductId = button.getAttribute('data-bs-ProductId')
-        //         console.log(ProductId + "njcsd")
-        //         document.getElementById('ProductId').value = ProductId;
-        //     })
-        // }
+      
         var generalSearch = $('#generalSearch').val();
         var multiselectlist = $('#multiselect').val();
-
-        function CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, sorttype, page, firstLoad) {
+        var pageSize = $('#PageSize').val();
+        function CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, sorttype, page, pageSize, firstLoad) {
             var categoryId = GetParameterValues('CategoryId')
             if (categoryId && firstLoad) {
                 document.getElementById('categoryfilter').value = categoryId;
                 categoryfilter = categoryId;
             }
 
-            console.log(multiselectlist);
+           
             $.ajax({
                 url: '/Products/GetProductsByFilter',
-                data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page },
+                data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page,pageSize : pageSize },
                 success: function (response) {
                     $('#productList').html(response);
                     sortTypeIconVisiblity(columnName, sorttype);
+                    $('#PageSize').val(pageSize);
                 },
                 error: function (e) {
                     console.log(e);
@@ -109,39 +99,50 @@
             categoryfilter = $('#categoryfilter').val();
             generalSearch = $('#generalSearch').val();
             multiselectlist = $('#multiselect').val();
-            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", page);
+            pageSize = $('#PageSize').val();
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", page, pageSize);
         }
         $('#multiselect').on('change', function () {
             multiselectlist = $('#multiselect').val();
             categoryfilter = $('#categoryfilter').val();
             generalSearch = $('#generalSearch').val();
-            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1);
+            pageSize = $('#PageSize').val();
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1, pageSize);
         });
+        function changePagesize(){
+            multiselectlist = $('#multiselect').val();
+            categoryfilter = $('#categoryfilter').val();
+            generalSearch = $('#generalSearch').val();
+            pageSize = $('#PageSize').val();
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1, pageSize);
+        }
+        
         $('#generalSearch').on('input', function () {
             multiselectlist = $('#multiselect').val();
             categoryfilter = $('#categoryfilter').val();
             generalSearch = $('#generalSearch').val();
-
-            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1);
+            pageSize = $('#PageSize').val();
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1, pageSize);
         });
         $('#categoryfilter').on('change', function () {
             categoryfilter = $('#categoryfilter').val();
             multiselectlist = $('#multiselect').val();
             generalSearch = $('#generalSearch').val();
-
-            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1);
+            pageSize = $('#PageSize').val();
+            CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1, pageSize);
         });
         $(document).ready(function () {
-            CategoryFilter(0, "", [], "ProductId", "Asce", 1, true);
+            CategoryFilter(0, "", [], "ProductId", "Asce", 1, 5,true);
         });
         function sortcolumn(columnName, ascendingSort) {
             categoryfilter = $('#categoryfilter').val();
             multiselectlist = $('#multiselect').val();
             generalSearch = $('#generalSearch').val();
+            pageSize = $('#PageSize').val();
             if (ascendingSort) {
-                CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Asce", 1);
+                CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Asce", 1, pageSize);
             } else {
-                CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Desc", 1);
+                CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Desc", 1, pageSize);
             }
         }
 

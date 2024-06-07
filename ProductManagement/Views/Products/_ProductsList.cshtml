@@ -6,9 +6,15 @@
     .accordion-button:not(.collapsed)::after {
         transform: rotate(-180deg);
     }
+
+    .accordion-button:not(.collapsed) {
+        color: #0c63e4;
+        background-color: #ffffff;
+        box-shadow: none;
+    }
 </style>
 <div class="mt-4">
-    <table class="table accordion table-striped table-hover">
+    <table class="table accordion  ">
         <thead>
             <tr>
                 <th>
@@ -169,20 +175,33 @@
             }
         </tbody>
     </table>
-    @if (ViewBag.TotalPages > 1)
-    {
-        <!-- Pagination controls -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                @for (int i = 1; i <= ViewBag.TotalPages; i++)
-                {
-                    <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
-                        <a class="page-link" href="#" onclick="filterDataPagination(@i)">@i</a>
-                    </li>
-                }
-            </ul>
-        </nav>
-    }
+    <div class="d-flex justify-content-between">
+        @if (ViewBag.TotalPages >= 1)
+        {
+            <!-- Pagination controls -->
+            <nav aria-label="Page navigation ">
+                <ul class="pagination">
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(ViewBag.CurrentPage == i ? " text-info fw-bolder" : "")">
+                            <a class="page-link" href="#" onclick="filterDataPagination(@i)">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+
+        <div class="  mb-3 d-flex gap-3">
+            <label >Products per page</label>
+            <select class="form-control" id="PageSize" onchange="changePagesize()">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+            </select>
+
+        </div>
+    </div>
+
 </div>
 
 <div class="modal fade" id="deletePopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -200,7 +219,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <form asp-action="DeleteProduct" asp-controller="Products">
-                    <input name="ProductId" id="ProductId" />
+                    <input name="ProductId" id="ProductId" hidden/>
                     <button type="submit" class="btn  btn-danger">Delete</button>
                 </form>
 
@@ -209,14 +228,14 @@
     </div>
 </div>
 
-    <script>
+<script>
 
 
     if (document.getElementById('deletePopup')) {
         document.getElementById('deletePopup').addEventListener('show.bs.modal', event => {
             const button = event.relatedTarget
             const ProductId = button.getAttribute('data-bs-ProductId')
-            console.log(ProductId + "njcsd")
+            console.log(ProductId)
             document.getElementById('ProductId').value = ProductId;
         })
     }

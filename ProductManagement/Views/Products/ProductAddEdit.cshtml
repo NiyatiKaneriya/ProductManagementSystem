@@ -7,6 +7,11 @@
     var Cities = ViewBag.Cities;
 }
 @model ProductManagement.Entities.ViewModels.ProductDetails
+<style>
+    label{
+        padding-left : 20px;
+    }
+</style>
 <section>
 
     <h3 class="mb-3">Add Products</h3>
@@ -15,7 +20,7 @@
         <input hidden asp-for="ProductId" id="ProductIdAddEdit" />
         <div class="form-floating col-md-6 mb-3">
             <input asp-for="ProductName" maxlength="50" type="text" class="form-control" id="ProductName" placeholder="Enter Category here....">
-            <label for="floatingInput">Product Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+            <label for="floatingInput" style="padding-left : 25px;">Product Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="ProductName-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
@@ -23,39 +28,39 @@
                      SelectList(@ViewBag.Category,"CategoryId","CategoryName"))">
             </select>
 
-            <label for="floatingInput">Category<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+            <label for="floatingInput" style="padding-left : 25px;">Category<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="CategoryId-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
             <input asp-for="Price" type="text" class="form-control" id="Price" placeholder="Enter Price here....">
-            <label for="floatingInput">Price<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+            <label for="floatingInput" style="padding-left : 25px;">Price<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="Price-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
             <input asp-for="SupplierName" maxlength="50" type="text" class="form-control" id="SupplierName" placeholder="Enter Supplier Name here....">
-            <label for="floatingInput">Supplier Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+            <label for="floatingInput" style="padding-left : 25px;">Supplier Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="SupplierName-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
             <input asp-for="SupplierEmail" pattern=".*\S+.*" maxlength="100" type="text" class="form-control" id="SupplierEmail" placeholder="Enter Supplier Email here....">
-            <label for="floatingInput">Supplier Email<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+            <label for="floatingInput" style="padding-left : 25px;">Supplier Email<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="SupplierEmail-error"></span>
         </div>
         <div class="form-floating col-md-6 mb-3">
             <input asp-for="SupplierPhoneNo" maxlength="10" type="tel" class="form-control " id="SupplierPhoneNo" placeholder="123-45-678">
-            <label for="floatingInput">Supplier PhoneNo.<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+            <label for="floatingInput" style="padding-left : 25px;">Supplier PhoneNo.<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="SupplierPhoneNo-error"></span>
         </div>
         <div class="form-floating col-md-12 mb-3">
             <textarea asp-for="ProductDescription" maxlength="256" class="form-control" placeholder="Enter Description of product here" id="ProductDescription" style="height: 100px"></textarea>
-            <label for="floatingInput">Description<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+            <label for="floatingInput" style="padding-left : 25px;">Description<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="ProductDescription-error"></span>
         </div>
         @if (Model != null)
         {
             <div class="form-floating col-md-6 mb-3">
                 <input asp-for="AvailableFrom" type="date" class="form-control AvailableFrom" id="AvailableFrom" placeholder="">
-                <label for="floatingInput">Available From<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+                <label for="floatingInput" style="padding-left : 25px;">Available From<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
                 <span class="text-danger" id="AvailableFrom-error"></span>
             </div>
         }
@@ -63,14 +68,14 @@
         {
             <div class="form-floating col-md-6 mb-3">
                 <input asp-for="AvailableFrom" type="date" min="Date()" class="form-control AvailableFrommin" id="AvailableFrom" placeholder="">
-                <label for="floatingInput">Available From<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+                <label for="floatingInput" style="padding-left : 25px;">Available From<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
                 <span class="text-danger" id="AvailableFrom-error"></span>
             </div>
         }
 
         <div class="form-floating col-md-6 mb-3">
             <input asp-for="ProductWebsite" type="text" class="form-control" id="ProductWebsite" placeholder="Enter Product Website here....">
-            <label for="floatingInput">Product Website<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
+            <label for="floatingInput" style="padding-left : 25px;">Product Website<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
             <span class="text-danger" id="ProductWebsite-error"></span>
         </div>
         <div class="form-floating d-flex gap-3 col-md-6 mb-3">
@@ -175,7 +180,11 @@
             var inputField = document.getElementById('SupplierPhoneNo');
             inputField.onkeydown = function (event) {
                 // Only allow if the e.key value is a number or if it's 'Backspace'
-                if (isNaN(event.key) && event.key !== 'Backspace') {
+                var key = event.keyCode;
+                if (key === 32) {
+                    event.preventDefault();
+                }
+                if (isNaN(event.key) && event.key !== 'Backspace' ) {
                     event.preventDefault();
                 }
             };
@@ -186,6 +195,15 @@
                 }
             }).on('paste', function (event) {
                 event.preventDefault();
+            });
+            var field = document.getElementById('SupplierEmail');
+
+            field.addEventListener('keypress', function (event) {
+                
+                var key = event.keyCode;
+                if (key === 32) {
+                    event.preventDefault();
+                }
             });
             // Get today's date in the format YYYY-MM-DD
             var today = new Date();

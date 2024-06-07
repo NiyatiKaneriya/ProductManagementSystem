@@ -2,16 +2,43 @@
     ViewData["Title"] = "Home Page";
 }
 @model ProductManagement.Entities.ViewModels.CategoryDetails
-<section >
-    
-    <h3 class="mb-3">Categories</h3>
-    
-    <a type="button" class="btn btn-outline-info" asp-action="CategoryAddEdit" asp-controller="Category">Add Category</a>
+<section>
 
-    <partial name="_CategoryList" />
+    <h3 class="mb-3">Categories</h3>
+    <div class="d-flex justify-content-between">
+        <a type="button" class="btn btn-info my-3" asp-action="CategoryAddEdit" asp-controller="Category">Add Category</a>
+        
+    </div>
+    <div id="CategoryList"></div>
+    @* <partial name="_CategoryList" /> *@
 </section>
 @section Scripts{
     <script>
+        $(document).ready(function () {
+            CategoryPagination(1, 5);
+        });
+        function CategoryPagination(page, pageSize) {
+           
+            $.ajax({
+                url: '/Category/GetCategoryByFilter',
+                data: {page: page, pageSize: pageSize },
+                success: function (response) {
+                    $('#CategoryList').html(response);
+                    $('#PageSizeCategory').val(pageSize);
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            })
+        }
+        function filterDataPagination(page) {
+            var pageSize = $('#PageSizeCategory').val();
+            CategoryPagination(page, pageSize);
+        }
+        function changePagesizeCategory() {
+            var pageSize = $('#PageSizeCategory').val();
+            CategoryPagination(1, pageSize);
+        }
         function TotalProductRedirect(TotalProducts, CategoryId) {
 
             var categoryfilter = CategoryId;
@@ -20,7 +47,7 @@
             var columnName = "ProductId";
             var sorttype = "Asce";
             var page = 1;
-            
+
             $.ajax({
                 url: '/Products/GetProductsByFilter',
                 data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page },
@@ -28,8 +55,8 @@
                 success: function (response) {
                     const page = window.open("Products", "_self")
                     page.document.getElementById('categoryfilter').value = CategoryId;
-                    
-                    
+
+
                 },
                 error: function (e) {
                     console.log(e);

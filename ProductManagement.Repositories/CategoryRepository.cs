@@ -107,7 +107,7 @@ namespace ProductManagement.Repositories
         /// Get All Category for displaing category List
         /// </summary>
         /// <returns></returns>
-        public List<CategoryDetails> GetAllCategories()
+        public List<CategoryDetails> GetAllCategories(int page, int pageSize)
         {
             try
             {
@@ -121,6 +121,53 @@ namespace ProductManagement.Repositories
                                                   TotalProducts = _context.Products.Where(x => x.CategoryId == c.CategoryId).Count(),
                                                   Sequence = c.Sequence,
                                               }).ToList();
+                List<CategoryDetails> paginatedData = data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                return paginatedData;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        public int GetAllCategoriesCount()
+        {
+            try
+            {
+                List<CategoryDetails> data = (from c in _context.Categories
+                                              where !c.DeletedAt.HasValue
+                                              orderby c.Sequence, c.CategoryId ascending
+                                              select new CategoryDetails
+                                              {
+                                                  CategoryId = c.CategoryId,
+                                                  CategoryName = c.CategoryName,
+                                                  TotalProducts = _context.Products.Where(x => x.CategoryId == c.CategoryId).Count(),
+                                                  Sequence = c.Sequence,
+                                              }).ToList();
+                
+                return data.Count();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        public List<CategoryDetails> GetCategories()
+        {
+            try
+            {
+                List<CategoryDetails> data = (from c in _context.Categories
+                                              where !c.DeletedAt.HasValue
+                                              orderby c.Sequence, c.CategoryId ascending
+                                              select new CategoryDetails
+                                              {
+                                                  CategoryId = c.CategoryId,
+                                                  CategoryName = c.CategoryName,
+                                                  TotalProducts = _context.Products.Where(x => x.CategoryId == c.CategoryId).Count(),
+                                                  Sequence = c.Sequence,
+                                              }).ToList();
+               
                 return data;
             }
             catch (Exception ex)

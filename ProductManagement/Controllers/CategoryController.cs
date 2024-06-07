@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProductManagement.Entities.Models;
 using ProductManagement.Entities.ViewModels;
 using ProductManagement.Models;
+using ProductManagement.Repositories;
 using ProductManagement.Repositories.Interfaces;
 using System.Diagnostics;
 
@@ -20,11 +21,27 @@ namespace ProductManagement.Controllers
         }
         public IActionResult Index()
         {
+            //CategoryDetails data = new CategoryDetails
+            //{
+            //    Categories = _categoryRepository.GetCategories()
+            //};
+            return View();
+        }
+        public IActionResult GetCategoryByFilter(int page , int pageSize)
+        {
+
+            
+            int totalCount = _categoryRepository.GetAllCategoriesCount();
+            int totalpages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
             CategoryDetails data = new CategoryDetails
             {
-                Categories = _categoryRepository.GetAllCategories()
+                Categories = _categoryRepository.GetAllCategories(page,pageSize)
             };
-            return View(data);
+            ViewBag.TotalPages = totalpages;
+            ViewBag.CurrentPage = page;
+            return PartialView("_CategoryList", data);
+
         }
         public IActionResult CategoryAddEdit(int? CategoryId)
         {

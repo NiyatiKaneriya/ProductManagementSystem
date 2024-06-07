@@ -22,7 +22,7 @@ namespace ProductManagement.Controllers
         }
         public IActionResult Index(int? CategoryId)
         {
-            ViewBag.Category = _categoryRepository.GetAllCategories();
+            ViewBag.Category = _categoryRepository.GetCategories();
             ViewBag.Cities = _productsRepository.GetCites();
             ViewBag.CategoryId = CategoryId;
             return View();
@@ -48,7 +48,7 @@ namespace ProductManagement.Controllers
 
         public IActionResult ProductAddEdit(int? ProductId)
         {
-            ViewBag.Category = _categoryRepository.GetAllCategories();
+            ViewBag.Category = _categoryRepository.GetCategories();
             ViewBag.Cities = _productsRepository.GetCites();
             if (ProductId.HasValue)
             {
