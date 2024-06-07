@@ -14,7 +14,7 @@
     }
 </style>
 <div class="mt-4">
-    <table class="table accordion  ">
+    <table class="table accordion  text-center dt-responsive">
         <thead>
             <tr>
                 <th>
@@ -160,7 +160,7 @@
 
                 </tr>
                 <tr class="accordion-collapse collapse" id="accordian-@item.ProductId">
-                    <td colspan="1">
+                    <td colspan="2">
                         <div class="d-flex align-items-baseline">
                             <img src="@item.FilePath" height="50" width="50" />
                             <a class="px-3" download href="@item.FilePath"><i class="fa-solid fa-download"></i></a>
@@ -168,32 +168,35 @@
 
                     </td>
 
-                    <td colspan="3"> <strong>Product description : </strong> @item.ProductDescription </td>
+                    <td colspan="2"> <strong>Product description : </strong> @item.ProductDescription </td>
                     <td colspan="2"> <strong>Product Website :</strong>  @item.ProductWebsite  </td>
                     <td colspan="3"> <strong>Available At :</strong>  @item.AvailableAt  </td>
                 </tr>
             }
         </tbody>
     </table>
-    <div class="d-flex justify-content-between">
-        @if (ViewBag.TotalPages >= 1)
-        {
-            <!-- Pagination controls -->
-            <nav aria-label="Page navigation ">
-                <ul class="pagination">
-                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
-                    {
-                        <li class="page-item @(ViewBag.CurrentPage == i ? " text-info fw-bolder" : "")">
-                            <a class="page-link" href="#" onclick="filterDataPagination(@i)">@i</a>
-                        </li>
-                    }
-                </ul>
-            </nav>
-        }
+    <div class="row d-flex justify-content-between">
+        <div class="col-md-3">
+            @if (ViewBag.TotalPages >= 1)
+            {
+                <!-- Pagination controls -->
+                <nav aria-label="Page navigation ">
+                    <ul class="pagination">
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(ViewBag.CurrentPage == i ? " text-info fw-bolder" : "")">
+                                <a class="page-link" href="#" onclick="filterDataPagination(@i)">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+       
 
-        <div class="  mb-3 d-flex gap-3">
-            <label >Products per page</label>
-            <select class="form-control" id="PageSize" onchange="changePagesize()">
+        <div class="col-md-3  mb-3 d-flex align-items-baseline">
+            <label class="col-md-8" >Products per page</label>
+            <select class="form-control col-md-4" id="PageSize" onchange="changePagesize()">
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="15">15</option>

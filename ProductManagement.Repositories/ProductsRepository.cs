@@ -198,11 +198,11 @@ namespace ProductManagement.Repositories
                                                  && (product.CategoryId == listParams.Categoryfilter || listParams.Categoryfilter == 0)
                                                  && (listParams.GeneralSearch == null || (product.ProductName.ToLower().Contains(listParams.GeneralSearch.ToLower())
                                                  || product.SupplierName.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                 || product.ProductDescription.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                 
                                                  || product.SupplierEmail.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                 || product.ProductWebsite.ToLower().Contains(listParams.GeneralSearch.ToLower()))
+                                                 
                                                  || product.Price.ToString().Contains(listParams.GeneralSearch)
-                                                 || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch)))
+                                                 || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch))))
                                                  select new ProductDetails
                                                  {
                                                      ProductId = product.ProductId,
@@ -297,11 +297,11 @@ namespace ProductManagement.Repositories
                                                  && (listParams.GeneralSearch == null ||
                                                  (product.ProductName.ToLower().Contains(listParams.GeneralSearch.ToLower())
                                                     || product.SupplierName.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                    || product.ProductDescription.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                                                    
                                                     || product.SupplierEmail.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                    || product.ProductWebsite.ToLower().Contains(listParams.GeneralSearch.ToLower()))
+                                                    
                                                     || product.Price.ToString().Contains(listParams.GeneralSearch)
-                                                    || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch)))
+                                                    || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch))))
                                                  select new ProductDetails
                                                  {
                                                      ProductId = product.ProductId,
