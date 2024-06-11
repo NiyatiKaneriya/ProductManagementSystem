@@ -7,16 +7,13 @@ using ProductManagement.Repositories.Interfaces;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
 builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopRight; });
-
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -45,10 +42,7 @@ app.UseExceptionHandler(
 app.UseStatusCodePagesWithReExecute("/Error/{0}");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
-app.UseAuthorization();
 app.UseNotyf();
 app.MapControllerRoute(
     name: "default",
@@ -58,5 +52,4 @@ app.MapControllerRoute(
         pattern: "/ErrorIndex",
         defaults: new { controller = "Home", action = "ErrorIndex" }
     );
-
 app.Run();

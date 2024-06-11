@@ -1,9 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
 <section class="container">
-
     <h3 class="mb-3">Products</h3>
     <a type="button" class="btn btn-info my-3" asp-controller="Products" asp-action="ProductAddEdit">Add Products</a>
     <div class="row">
@@ -23,28 +21,22 @@
 
 
         <div class="form-floating w-100  col-md-3 mb-3">
-            <select id="multiselect"  multiple="multiple" asp-items="@(new
+            <select id="multiselect" multiple="multiple" asp-items="@(new
                      SelectList(@ViewBag.Cities,"CityId","CityName"))" class="form-select chosen-select w-100" name="test">
             </select>
 
         </div>
-      
+
     </div>
     <div id="productList">
     </div>
-    
-    @* <partial name="_ProductsList" /> *@
 </section>
 
-
 @section Scripts{
-
     <script>
-
         $(document).ready(function () {
             $('#multiselect').multiselect({ showSelectedValues: true });
         });
-      
         var generalSearch = $('#generalSearch').val();
         var multiselectlist = $('#multiselect').val();
         var pageSize = $('#PageSize').val();
@@ -54,11 +46,9 @@
                 document.getElementById('categoryfilter').value = categoryId;
                 categoryfilter = categoryId;
             }
-
-           
             $.ajax({
                 url: '/Products/GetProductsByFilter',
-                data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page,pageSize : pageSize },
+                data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page, pageSize: pageSize },
                 success: function (response) {
                     $('#productList').html(response);
                     sortTypeIconVisiblity(columnName, sorttype);
@@ -69,9 +59,7 @@
                 }
             })
         }
-
         function sortTypeIconVisiblity(columnName, sortType) {
-
             if (columnName) {
                 var idup = "#up-" + columnName;
                 var iddown = "#down-" + columnName;
@@ -84,7 +72,6 @@
                 }
             }
         }
-
         function GetParameterValues(param) {
             var url = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
             for (var i = 0; i < url.length; i++) {
@@ -94,7 +81,6 @@
                 }
             }
         }
-
         function filterDataPagination(page) {
             categoryfilter = $('#categoryfilter').val();
             generalSearch = $('#generalSearch').val();
@@ -109,14 +95,13 @@
             pageSize = $('#PageSize').val();
             CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1, pageSize);
         });
-        function changePagesize(){
+        function changePagesize() {
             multiselectlist = $('#multiselect').val();
             categoryfilter = $('#categoryfilter').val();
             generalSearch = $('#generalSearch').val();
             pageSize = $('#PageSize').val();
             CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1, pageSize);
         }
-        
         $('#generalSearch').on('input', function () {
             multiselectlist = $('#multiselect').val();
             categoryfilter = $('#categoryfilter').val();
@@ -132,7 +117,7 @@
             CategoryFilter(categoryfilter, generalSearch, multiselectlist, "ProductId", "Asce", 1, pageSize);
         });
         $(document).ready(function () {
-            CategoryFilter(0, "", [], "ProductId", "Asce", 1, 5,true);
+            CategoryFilter(0, "", [], "ProductId", "Asce", 1, 5, true);
         });
         function sortcolumn(columnName, ascendingSort) {
             categoryfilter = $('#categoryfilter').val();
@@ -145,7 +130,5 @@
                 CategoryFilter(categoryfilter, generalSearch, multiselectlist, columnName, "Desc", 1, pageSize);
             }
         }
-
-        
     </script>
 }

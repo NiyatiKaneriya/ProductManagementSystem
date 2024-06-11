@@ -1,11 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
-using ProductManagement.Entities.Models;
 using ProductManagement.Entities.ViewModels;
-using ProductManagement.Models;
-using ProductManagement.Repositories;
 using ProductManagement.Repositories.Interfaces;
-using System.Diagnostics;
 
 namespace ProductManagement.Controllers
 {
@@ -14,77 +10,57 @@ namespace ProductManagement.Controllers
         private readonly ICategoryRepository _categoryRepository;
         private readonly INotyfService _notyf;
 
-        public CategoryController(ICategoryRepository categoryRepository,INotyfService notyf)
+        public CategoryController(ICategoryRepository categoryRepository, INotyfService notyf)
         {
             _categoryRepository = categoryRepository;
             _notyf = notyf;
         }
+
         public IActionResult Index()
         {
-            //CategoryDetails data = new CategoryDetails
-            //{
-            //    Categories = _categoryRepository.GetCategories()
-            //};
             return View();
         }
-        public IActionResult GetCategoryByFilter(int page , int pageSize)
-        {
 
-            
+        public IActionResult GetCategoryByFilter(int page, int pageSize)
+        {
             int totalCount = _categoryRepository.GetAllCategoriesCount();
             int totalpages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            CategoryDetails data = new CategoryDetails
+            CategoryDetails categoryDetails = new CategoryDetails
             {
-                Categories = _categoryRepository.GetAllCategories(page,pageSize)
+                Categories = _categoryRepository.GetAllCategories(page, pageSize)
             };
             ViewBag.TotalPages = totalpages;
             ViewBag.CurrentPage = page;
-            return PartialView("_CategoryList", data);
+            return PartialView("_CategoryList", categoryDetails);
 
         }
+
         public IActionResult CategoryAddEdit(int? CategoryId)
         {
-            if(!CategoryId.HasValue)
+            if (!CategoryId.HasValue)
             {
                 return View();
             }
-            else
-            {
-                CategoryDetails data = _categoryRepository.GetCategoryDetails(CategoryId.Value);
-                return View(data);
-            }
-           
+
+            CategoryDetails categoryDetails = _categoryRepository.GetCategoryDetails(CategoryId.Value);
+            return View(categoryDetails);
         }
+
         public IActionResult AddEditCategory(CategoryDetails category)
         {
             if (_categoryRepository.AddEditCategory(category))
             {
-                if(category.CategoryId != default)
-                {
-                    _notyf.Success(Constant.CategoryEditSuccess);
-                }
-                else
-                {
-                    _notyf.Success(Constant.CategoryAddSuccess);
-                }
-                
+                _notyf.Success(category.CategoryId != default ? Constant.CategoryEditSuccess : Constant.CategoryAddSuccess);
             }
             else
             {
-                if (category.CategoryId != default)
-                {
-                    _notyf.Error(Constant.CategoryEditError);
-                }
-                else
-                {
-                    _notyf.Error(Constant.CategoryAddError);
-                }
-               
+                _notyf.Error(category.CategoryId != default ? Constant.CategoryEditError : Constant.CategoryAddError);
             }
 
             return RedirectToAction("Index");
         }
+
         public IActionResult DeleteCategory(int CategoryId)
         {
             if (_categoryRepository.DeleteCategory(CategoryId))
@@ -95,7 +71,7 @@ namespace ProductManagement.Controllers
             {
                 _notyf.Error(Constant.DeleteCategoryError);
             }
-           
+
             return RedirectToAction("Index");
         }
     }

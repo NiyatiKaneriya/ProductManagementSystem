@@ -1,20 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using ProductManagement.Entities.DataContext;
+﻿using ProductManagement.Entities.DataContext;
 using ProductManagement.Entities.Models;
 using ProductManagement.Entities.ViewModels;
 using ProductManagement.Repositories.Interfaces;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ProductManagement.Repositories
 {
-    
     public class ProductsRepository : IProductsRepository
     {
         private readonly ApplicationDbContext _context;
@@ -37,33 +27,29 @@ namespace ProductManagement.Repositories
             {
                 string FilePath = "wwwroot\\UploadedProductImage\\" + ProductId;
                 string path = Path.Combine(Directory.GetCurrentDirectory(), FilePath);
+
                 if (Directory.Exists(path))
                 {
-                    Directory.Delete(path,true);
-                    Directory.CreateDirectory(path);
+                    Directory.Delete(path, true);
                 }
-                else
+
+                Directory.CreateDirectory(path);
+
+                string newfilename = $"{"ProductIamge"}.{Path.GetExtension(model.ProductImage.FileName).Trim('.')}";
+                string fileNameWithPath = Path.Combine(path, newfilename);
+                model.FilePath = FilePath.Replace("wwwroot\\UploadedProductImage\\", "/UploadedProductImage/") + "/" + newfilename;
+
+                using (FileStream stream = new FileStream(fileNameWithPath, FileMode.Create))
                 {
-                    Directory.CreateDirectory(path);
+                    model.ProductImage.CopyTo(stream);
                 }
-                   
-                
-                if (model.ProductImage != null)
+
+                Product? product = _context.Products.FirstOrDefault(e => e.ProductId == ProductId);
+                if (product != null)
                 {
-                    string newfilename = $"{"ProductIamge"}.{Path.GetExtension(model.ProductImage.FileName).Trim('.')}";
-                    string fileNameWithPath = Path.Combine(path, newfilename);
-                    model.FilePath = FilePath.Replace("wwwroot\\UploadedProductImage\\", "/UploadedProductImage/") + "/" + newfilename;
-                    using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
-                    {
-                        model.ProductImage.CopyTo(stream);
-                    }
-                    Product product = _context.Products.FirstOrDefault(e => e.ProductId == ProductId);
-                    if (product != null)
-                    {
-                        product.FilePath = model.FilePath;
-                        _context.Products.Update(product);
-                        _context.SaveChanges();
-                    }
+                    product.FilePath = model.FilePath;
+                    _context.Products.Update(product);
+                    _context.SaveChanges();
                 }
                 return true;
             }
@@ -103,43 +89,12 @@ namespace ProductManagement.Repositories
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
-
-
         }
         #endregion
 
-        /// <summary>
-        /// Inserts the or update.
-        /// </summary>
-        /// <param name="product">The product.</param>
-        public void InsertOrUpdate(Product product)
-        {
-            try
-            {
-                if (product.ProductId != default)
-                {
-                    product.ModifiedDate = DateTime.Now;
-                    _context.Products.Update(product);
-                }
-                else
-                {
-                    product.CreatedDate = DateTime.Now;
-                    _context.Products.Add(product);
-                }
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
-
         #region Product detail for edit product
-
         /// <summary>
         /// Gets the product detail.
         /// </summary>
@@ -193,43 +148,36 @@ namespace ProductManagement.Repositories
         {
             try
             {
-                List<ProductDetails> products = (from product in _context.Products
-                                                 where (!product.DeletedAt.HasValue
-                                                 && (product.CategoryId == listParams.Categoryfilter || listParams.Categoryfilter == 0)
-                                                 && (listParams.GeneralSearch == null || (product.ProductName.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                 || product.SupplierName.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                 
-                                                 || product.SupplierEmail.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                 
-                                                 || product.Price.ToString().Contains(listParams.GeneralSearch)
-                                                 || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch))))
-                                                 select new ProductDetails
-                                                 {
-                                                     ProductId = product.ProductId,
-                                                     ProductName = product.ProductName,
-                                                     ProductDescription = product.ProductDescription,
-                                                     CategoryId = product.CategoryId,
-                                                     Category = _context.Categories.First(e => e.CategoryId == product.CategoryId).CategoryName,
-                                                     ProductWebsite = product.ProductWebsite,
-                                                     IsActive = product.IsActive,
-                                                     Price = product.Price,
-                                                     SupplierName = product.SupplierName,
-                                                     SupplierEmail = product.SupplierEmail,
-                                                     AvailableFrom = (DateTime)product.AvailableFrom,
-                                                     AvailableAt = product.AvailableAt,
-                                                     FilePath = product.FilePath,
-                                                     AvailableAtIds = product.AvailableAt,
-                                                 }).ToList();
+                List<ProductDetails> products = GetProducts(listParams).Select(product =>
+                new ProductDetails
+                {
+                    ProductId = product.ProductId,
+                    ProductName = product.ProductName,
+                    ProductDescription = product.ProductDescription,
+                    CategoryId = product.CategoryId,
+                    Category = _context.Categories.First(e => e.CategoryId == product.CategoryId).CategoryName,
+                    ProductWebsite = product.ProductWebsite,
+                    IsActive = product.IsActive,
+                    Price = product.Price,
+                    SupplierName = product.SupplierName,
+                    SupplierEmail = product.SupplierEmail,
+                    AvailableFrom = (DateTime)product.AvailableFrom,
+                    AvailableAt = product.AvailableAt,
+                    FilePath = product.FilePath,
+                    AvailableAtIds = product.AvailableAt,
+                }).ToList();
+
                 if (!string.IsNullOrWhiteSpace(listParams.Multiselectlist))
                 {
                     List<int> availableCities = listParams.Multiselectlist.Split(',').Select(int.Parse).ToList();
-                    products = (from pro in products.Where(a => !string.IsNullOrWhiteSpace(a.AvailableAt))
-                                let sadf = pro.AvailableAt.Split(",").Select(int.Parse).ToList()
-                                where sadf.Any(availableCities.Contains)
-                                select pro
+                    products = (from product in products.Where(a => !string.IsNullOrWhiteSpace(a.AvailableAt))
+                                let availableCity = product.AvailableAt.Split(",").Select(int.Parse).ToList()
+                                where availableCity.Any(availableCities.Contains)
+                                select product
                               ).ToList();
                 }
 
+                //for city name 
                 List<City> cities = _context.Cities.ToList();
                 foreach (ProductDetails item in products)
                 {
@@ -238,11 +186,11 @@ namespace ProductManagement.Repositories
                     item.AvailableAt = string.Join(",", availablecities);
                 }
 
-                List<ProductDetails> orderdlist = new List<ProductDetails>();
+                List<ProductDetails> orderdlistproducts = new List<ProductDetails>();
 
                 if (listParams.Sorttype == "Asce")
                 {
-                    orderdlist = listParams.ColumnName switch
+                    orderdlistproducts = listParams.ColumnName switch
                     {
                         "ProductId" => products.OrderBy(c => c.ProductId).ToList(),
                         "ProductName" => products.OrderBy(c => c.ProductName).ToList(),
@@ -256,7 +204,7 @@ namespace ProductManagement.Repositories
                 }
                 else
                 {
-                    orderdlist = listParams.ColumnName switch
+                    orderdlistproducts = listParams.ColumnName switch
                     {
                         "ProductId" => products.OrderByDescending(c => c.ProductId).ToList(),
                         "ProductName" => products.OrderByDescending(c => c.ProductName).ToList(),
@@ -269,16 +217,18 @@ namespace ProductManagement.Repositories
                     };
                 }
 
-                List<ProductDetails> distinctItems = orderdlist.GroupBy(x => x.ProductId).Select(y => y.First()).ToList();
-                List<ProductDetails> paginatedData = distinctItems.Skip((listParams.Page - 1) * listParams.PageSize).Take(listParams.PageSize).ToList();
-                return paginatedData;
+                List<ProductDetails> distinctproducts = orderdlistproducts.GroupBy(x => x.ProductId).Select(y => y.First()).ToList();
+                List<ProductDetails> paginatedDataproducts = distinctproducts.Skip((listParams.Page - 1) * listParams.PageSize).Take(listParams.PageSize).ToList();
+                return paginatedDataproducts;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
+        #endregion
 
+        #region GetAllProductsCount
         /// <summary>
         /// Gets all products count.
         /// </summary>
@@ -290,47 +240,32 @@ namespace ProductManagement.Repositories
         {
             try
             {
+                List<ProductDetails> products = GetProducts(listParams).Select(product => new ProductDetails
+                {
+                    ProductId = product.ProductId,
+                    AvailableAt = product.AvailableAt,
+                }).ToList();
 
-                List<ProductDetails> products = (from product in _context.Products
-                                                 where (!product.DeletedAt.HasValue
-                                                 && (product.CategoryId == listParams.Categoryfilter || listParams.Categoryfilter == 0)
-                                                 && (listParams.GeneralSearch == null ||
-                                                 (product.ProductName.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                    || product.SupplierName.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                    
-                                                    || product.SupplierEmail.ToLower().Contains(listParams.GeneralSearch.ToLower())
-                                                    
-                                                    || product.Price.ToString().Contains(listParams.GeneralSearch)
-                                                    || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch))))
-                                                 select new ProductDetails
-                                                 {
-                                                     ProductId = product.ProductId,
-                                                     AvailableAt = product.AvailableAt,
-                                                 }).ToList();
                 if (!string.IsNullOrWhiteSpace(listParams.Multiselectlist))
                 {
                     List<int> availableCities = listParams.Multiselectlist.Split(',').Select(int.Parse).ToList();
-                    products = (from pro in products.Where(a => !string.IsNullOrWhiteSpace(a.AvailableAt))
-                                let sadf = pro.AvailableAt.Split(",").Select(int.Parse).ToList()
-                                where sadf.Any(availableCities.Contains)
-                                select pro
+                    products = (from product in products.Where(a => !string.IsNullOrWhiteSpace(a.AvailableAt))
+                                let availableCity = product.AvailableAt.Split(",").Select(int.Parse).ToList()
+                                where availableCity.Any(availableCities.Contains)
+                                select product
                               ).ToList();
                 }
-
-                var distinctItems = products.GroupBy(x => x.ProductId).Select(y => y.First());
-                return distinctItems.Count();
+                var distinctproducts = products.GroupBy(x => x.ProductId).Select(y => y.First());
+                return distinctproducts.Count();
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
-
         }
         #endregion
 
         #region Delete Product
-
         /// <summary>
         /// Deletes the product.
         /// </summary>
@@ -363,6 +298,54 @@ namespace ProductManagement.Repositories
             try
             {
                 return _context.Cities.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
+        #region Get PRoducts
+        /// <summary>
+        /// Gets the products.
+        /// </summary>
+        /// <param name="listParams">The list parameters.</param>
+        /// <returns></returns>
+        private IQueryable<Product> GetProducts(ProductListParams listParams)
+        {
+            return (from product in _context.Products
+                    where (!product.DeletedAt.HasValue
+                    && (product.CategoryId == listParams.Categoryfilter || listParams.Categoryfilter == 0)
+                    && (listParams.GeneralSearch == null || (product.ProductName.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                    || product.SupplierName.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                    || product.SupplierEmail.ToLower().Contains(listParams.GeneralSearch.ToLower())
+                    || product.Price.ToString().Contains(listParams.GeneralSearch)
+                    || product.AvailableFrom.ToString().Contains(listParams.GeneralSearch))))
+                    select product).AsQueryable();
+        }
+        #endregion
+
+        #region InsertOrUpdate
+        /// <summary>
+        /// Inserts the or update.
+        /// </summary>
+        /// <param name="product">The product.</param>
+        private void InsertOrUpdate(Product product)
+        {
+            try
+            {
+                if (product.ProductId != default)
+                {
+                    product.ModifiedDate = DateTime.Now;
+                    _context.Products.Update(product);
+                }
+                else
+                {
+                    product.CreatedDate = DateTime.Now;
+                    _context.Products.Add(product);
+                }
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {

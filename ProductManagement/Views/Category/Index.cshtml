@@ -7,10 +7,8 @@
     <h3 class="mb-3">Categories</h3>
     <div class="d-flex justify-content-between">
         <a type="button" class="btn btn-info my-3" asp-action="CategoryAddEdit" asp-controller="Category">Add Category</a>
-        
     </div>
     <div id="CategoryList"></div>
-    @* <partial name="_CategoryList" /> *@
 </section>
 @section Scripts{
     <script>
@@ -18,10 +16,9 @@
             CategoryPagination(1, 5);
         });
         function CategoryPagination(page, pageSize) {
-           
             $.ajax({
                 url: '/Category/GetCategoryByFilter',
-                data: {page: page, pageSize: pageSize },
+                data: { page: page, pageSize: pageSize },
                 success: function (response) {
                     $('#CategoryList').html(response);
                     $('#PageSizeCategory').val(pageSize);
@@ -40,14 +37,12 @@
             CategoryPagination(1, pageSize);
         }
         function TotalProductRedirect(TotalProducts, CategoryId) {
-
             var categoryfilter = CategoryId;
             var generalSearch = "";
             var multiselectlist = "";
             var columnName = "ProductId";
             var sorttype = "Asce";
             var page = 1;
-
             $.ajax({
                 url: '/Products/GetProductsByFilter',
                 data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page },
@@ -55,8 +50,6 @@
                 success: function (response) {
                     const page = window.open("Products", "_self")
                     page.document.getElementById('categoryfilter').value = CategoryId;
-
-
                 },
                 error: function (e) {
                     console.log(e);

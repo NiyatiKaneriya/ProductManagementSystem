@@ -24,7 +24,6 @@ namespace ProductManagement.Repositories
         {
             try
             {
-
                 Category category = categoryAddEdit.CategoryId != default ? _context.Categories.First(e => e.CategoryId == categoryAddEdit.CategoryId) : new Category();
                 category.CategoryName = categoryAddEdit.CategoryName;
                 category.Sequence = categoryAddEdit.Sequence;
@@ -32,6 +31,108 @@ namespace ProductManagement.Repositories
                 InsertOrUpdateCategory(category);
 
                 return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
+        #region Delete Category
+        /// <summary>
+        /// Delete category only if no products are avilable in this category
+        /// </summary>
+        /// <param name="categoryId"></param>
+        /// <returns></returns>
+        public bool DeleteCategory(int categoryId)
+        {
+            try
+            {
+                if (_context.Products.Any(e => e.CategoryId == categoryId))
+                {
+                    return false;
+                }
+                else
+                {
+                    Category? category = _context.Categories.FirstOrDefault(e => e.CategoryId == categoryId);
+                    if (category != null)
+                    {
+                        category.DeletedAt = DateTime.Now;
+                        InsertOrUpdateCategory(category);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        #endregion
+
+        #region Get All Category for displaing category List
+        /// <summary>
+        /// Get All Category for displaing category List
+        /// </summary>
+        /// <returns></returns>
+        public List<CategoryDetails> GetAllCategories(int page, int pageSize)
+        {
+            try
+            {
+                List<CategoryDetails> categories = GetCategories();
+                List<CategoryDetails> paginatedCategories = categories.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                return paginatedCategories;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        #endregion
+
+        #region Get category counts for paginations
+        /// <summary>
+        /// Gets all categories count.
+        /// </summary>
+        /// <returns></returns>
+        public int GetAllCategoriesCount()
+        {
+            try
+            {
+                return GetCategories().Count;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        #endregion
+
+        #region get categories for dropdowns
+        /// <summary>
+        /// Gets the categories.
+        /// </summary>
+        /// <returns></returns>
+        public List<CategoryDetails> GetCategories()
+        {
+            try
+            {
+                List<CategoryDetails> categories = (from c in _context.Categories
+                                                    where !c.DeletedAt.HasValue
+                                                    orderby c.Sequence, c.CategoryId ascending
+                                                    select new CategoryDetails
+                                                    {
+                                                        CategoryId = c.CategoryId,
+                                                        CategoryName = c.CategoryName,
+                                                        TotalProducts = _context.Products.Count(x => x.CategoryId == c.CategoryId),
+                                                        Sequence = c.Sequence,
+                                                    }).ToList();
+                return categories;
             }
             catch (Exception ex)
             {
@@ -46,7 +147,7 @@ namespace ProductManagement.Repositories
         /// Generic Function for Insert or Update Category
         /// </summary>
         /// <param name="category"></param>
-        public void InsertOrUpdateCategory(Category category)
+        private void InsertOrUpdateCategory(Category category)
         {
             try
             {
@@ -70,113 +171,6 @@ namespace ProductManagement.Repositories
         }
         #endregion
 
-
-        #region Delete Category
-        /// <summary>
-        /// Delete category only if no products are avilable in this category
-        /// </summary>
-        /// <param name="categoryId"></param>
-        /// <returns></returns>
-        public bool DeleteCategory(int categoryId)
-        {
-            try
-            {
-                Category category = _context.Categories.First(e => e.CategoryId == categoryId);
-                List<Product> product = _context.Products.Where(e => e.CategoryId == categoryId).ToList();
-                if (product.Count != 0)
-                {
-                    return false;
-                }
-                if (category != null && product.Count == 0)
-                {
-                    category.DeletedAt = DateTime.Now;
-                    InsertOrUpdateCategory(category);
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
-        #endregion
-        #region Get All Category for displaing category List
-        /// <summary>
-        /// Get All Category for displaing category List
-        /// </summary>
-        /// <returns></returns>
-        public List<CategoryDetails> GetAllCategories(int page, int pageSize)
-        {
-            try
-            {
-                List<CategoryDetails> data = (from c in _context.Categories
-                                              where !c.DeletedAt.HasValue
-                                              orderby c.Sequence, c.CategoryId ascending
-                                              select new CategoryDetails
-                                              {
-                                                  CategoryId = c.CategoryId,
-                                                  CategoryName = c.CategoryName,
-                                                  TotalProducts = _context.Products.Where(x => x.CategoryId == c.CategoryId).Count(),
-                                                  Sequence = c.Sequence,
-                                              }).ToList();
-                List<CategoryDetails> paginatedData = data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-                return paginatedData;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
-        public int GetAllCategoriesCount()
-        {
-            try
-            {
-                List<CategoryDetails> data = (from c in _context.Categories
-                                              where !c.DeletedAt.HasValue
-                                              orderby c.Sequence, c.CategoryId ascending
-                                              select new CategoryDetails
-                                              {
-                                                  CategoryId = c.CategoryId,
-                                                  CategoryName = c.CategoryName,
-                                                  TotalProducts = _context.Products.Where(x => x.CategoryId == c.CategoryId).Count(),
-                                                  Sequence = c.Sequence,
-                                              }).ToList();
-                
-                return data.Count();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
-        public List<CategoryDetails> GetCategories()
-        {
-            try
-            {
-                List<CategoryDetails> data = (from c in _context.Categories
-                                              where !c.DeletedAt.HasValue
-                                              orderby c.Sequence, c.CategoryId ascending
-                                              select new CategoryDetails
-                                              {
-                                                  CategoryId = c.CategoryId,
-                                                  CategoryName = c.CategoryName,
-                                                  TotalProducts = _context.Products.Where(x => x.CategoryId == c.CategoryId).Count(),
-                                                  Sequence = c.Sequence,
-                                              }).ToList();
-               
-                return data;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-        }
-        #endregion
         #region GetCategoryDetails for edit category
         /// <summary>
         /// GetCategoryDetails for edit category
@@ -187,7 +181,7 @@ namespace ProductManagement.Repositories
         {
             try
             {
-                Category categoryDetail = _context.Categories.Where(e => e.CategoryId == CategoryId).First();
+                Category categoryDetail = _context.Categories.First(e => e.CategoryId == CategoryId);
                 CategoryDetails data = new CategoryDetails
                 {
                     CategoryId = categoryDetail.CategoryId,

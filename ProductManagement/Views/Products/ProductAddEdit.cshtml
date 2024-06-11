@@ -134,9 +134,6 @@
                             </div>
                         }
                     }
-
-
-
                 }
                 <span class="text-danger" id="AvailableAt-error"></span>
             </div>
@@ -144,11 +141,7 @@
         <div class=" col-md-6 mb-3">
             <label for="formFile" class="form-label">Product image<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
 
-
-
             <input asp-for="ProductImage" class="form-control formFile" type="file" id="formFile">
-
-
 
             <span class="text-danger" id="ProductImage-error"></span>
             <div class="d-flex">
@@ -242,19 +235,15 @@
 
                 img.src = event.target.result;
                 img.style.display = 'block';
-                /* imgdb.style.display = 'none'; */// Show the image
             };
 
             reader.readAsDataURL(file);
-            //document.getElementById("getFilePhoto").textContent = this.files[0].name;
-
-
+            
             console.log(fileName);
             console.log('done');
         })
 
         function validateFileType() {
-            debugger
             console.log("inside filetype validation")
             var selectedFile = document.getElementById('formFile').files[0];
 
@@ -418,7 +407,6 @@
             const ProductId = document.getElementById("ProductIdAddEdit").value
             const formFile =
                 document.getElementById("formFile").value;
-            debugger
             const formFileerror =
                 document.getElementById("ProductImage-error");
             formFileerror.textContent = "";
@@ -432,7 +420,6 @@
             if (isValid == false) {
                 event.preventDefault();
             }
-
 
             return isValid;
         }

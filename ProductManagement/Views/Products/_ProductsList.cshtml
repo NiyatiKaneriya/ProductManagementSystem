@@ -18,11 +18,9 @@
         <thead>
             <tr>
                 <th>
-
+                    #.
                 </th>
-                @*   <th>
-                Product Image
-                </th> *@
+
                 <th hidden>
                     Product Id
                 </th>
@@ -39,11 +37,8 @@
                             <div class="downArrow" id="down-ProductName" style="display:none" onclick="sortcolumn('ProductName', true);">
                                 <i class="fas fa-sort"></i>
                             </div>
-
                         </div>
-
                     </div>
-
                 </th>
                 <th>
                     <div class="d-flex">
@@ -56,11 +51,8 @@
                             <div class="downArrow" id="down-Category" style="display:none" onclick="sortcolumn('Category', true);">
                                 <i class="fas fa-sort"></i>
                             </div>
-
                         </div>
-
                     </div>
-
                 </th>
                 <th>
                     <div class="d-flex">
@@ -73,11 +65,8 @@
                             <div class="downArrow" id="down-Price" style="display:none" onclick="sortcolumn('Price', true);">
                                 <i class="fas fa-sort"></i>
                             </div>
-
                         </div>
-
                     </div>
-
                 </th>
                 <th>
                     <div class="d-flex">
@@ -90,11 +79,8 @@
                             <div class="downArrow" id="down-SupplierName" style="display:none" onclick="sortcolumn('SupplierName', true);">
                                 <i class="fas fa-sort"></i>
                             </div>
-
                         </div>
-
                     </div>
-
                 </th>
                 <th>
                     <div class="d-flex">
@@ -107,13 +93,9 @@
                             <div class="downArrow" id="down-SupplierEmail" style="display:none" onclick="sortcolumn('SupplierEmail', true);">
                                 <i class="fas fa-sort"></i>
                             </div>
-
                         </div>
-
                     </div>
-
                 </th>
-
                 <th>
                     <div class="d-flex">
                         Available From
@@ -125,11 +107,8 @@
                             <div class="downArrow" id="down-AvailableFrom" style="display:none" onclick="sortcolumn('AvailableFrom', true);">
                                 <i class="fas fa-sort"></i>
                             </div>
-
                         </div>
-
                     </div>
-
                 </th>
                 <th>
                     Actions
@@ -157,7 +136,6 @@
                         <a class="btn btn-outline-info" asp-action="ProductAddEdit" asp-controller="Products" asp-route-ProductId="@item.ProductId">Edit</a>
                         <a class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deletePopup" data-bs-ProductId="@item.ProductId">Delete</a>
                     </td>
-
                 </tr>
                 <tr class="accordion-collapse collapse" id="accordian-@item.ProductId">
                     <td colspan="2">
@@ -165,9 +143,7 @@
                             <img src="@item.FilePath" height="50" width="50" />
                             <a class="px-3" download href="@item.FilePath"><i class="fa-solid fa-download"></i></a>
                         </div>
-
                     </td>
-
                     <td colspan="2"> <strong>Product description : </strong> @item.ProductDescription </td>
                     <td colspan="2"> <strong>Product Website :</strong>  @item.ProductWebsite  </td>
                     <td colspan="3"> <strong>Available At :</strong>  @item.AvailableAt  </td>
@@ -192,10 +168,8 @@
                 </nav>
             }
         </div>
-       
-
         <div class="col-md-3  mb-3 d-flex align-items-baseline">
-            <label class="col-md-8" >Products per page</label>
+            <label class="col-md-8">Products per page</label>
             <select class="form-control col-md-4" id="PageSize" onchange="changePagesize()">
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -204,6 +178,8 @@
 
         </div>
     </div>
+
+
 
 </div>
 
@@ -222,7 +198,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <form asp-action="DeleteProduct" asp-controller="Products">
-                    <input name="ProductId" id="ProductId" hidden/>
+                    <input name="ProductId" id="ProductId" hidden />
                     <button type="submit" class="btn  btn-danger">Delete</button>
                 </form>
 

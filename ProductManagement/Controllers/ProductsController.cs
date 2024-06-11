@@ -1,11 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
-using ProductManagement.Entities.Models;
 using ProductManagement.Entities.ViewModels;
-using ProductManagement.Models;
 using ProductManagement.Repositories.Interfaces;
-using System.Diagnostics;
-using System.Drawing;
 
 namespace ProductManagement.Controllers
 {
@@ -27,25 +23,23 @@ namespace ProductManagement.Controllers
             ViewBag.CategoryId = CategoryId;
             return View();
         }
+
         public IActionResult GetProductsByFilter(ProductListParams listParams)
         {
-
             ViewBag.CategoryId = null;
             int totalCount = _productsRepository.GetAllProductsCount(listParams);
             int totalpages = (int)Math.Ceiling(totalCount / (double)listParams.PageSize);
 
-            ProductDetails data = new ProductDetails
+            ProductDetails productDetails = new ProductDetails
             {
                 Products = _productsRepository.GetAllProducts(listParams)
             };
             ViewBag.TotalPages = totalpages;
             ViewBag.CurrentPage = listParams.Page;
-            return PartialView("_ProductsList", data);
-
+            return PartialView("_ProductsList", productDetails);
         }
 
-
-
+        //for display view
         public IActionResult ProductAddEdit(int? ProductId)
         {
             ViewBag.Category = _categoryRepository.GetCategories();
@@ -57,33 +51,22 @@ namespace ProductManagement.Controllers
             }
             return View();
         }
+
+        // for the form submission
         public IActionResult AddEditProduct(ProductDetails productAddEdit)
         {
             if (_productsRepository.AddEditProduct(productAddEdit))
             {
-                if (productAddEdit.ProductId != default)
-                {
-                    _notyf.Success(Constant.ProductEditSuccess);
-                }
-                else
-                {
-                    _notyf.Success(Constant.ProductAddSuccess);
-                }
+                _notyf.Success(productAddEdit.ProductId != default ? Constant.ProductEditSuccess : Constant.ProductAddSuccess);
             }
             else
             {
-                if (productAddEdit.ProductId != default)
-                {
-                    _notyf.Error(Constant.ProductEditError);
-                }
-                else
-                {
-                    _notyf.Error(Constant.ProductAddError);
-                }
+                _notyf.Error(productAddEdit.ProductId != default ? Constant.ProductEditError : Constant.ProductAddError);
             }
 
             return RedirectToAction("Index");
         }
+
         public IActionResult DeleteProduct(int ProductId)
         {
             if (_productsRepository.DeleteProduct(ProductId))
