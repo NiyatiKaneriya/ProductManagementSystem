@@ -4,7 +4,7 @@
 
 @model ProductManagement.Entities.ViewModels.CategoryDetails
 <div class="mt-4">
-    <table class="table text-center dt-responsive">
+    <table class="table text-center dt-responsive" >
         <thead>
             <tr>
                 <th hidden>
@@ -21,7 +21,7 @@
                 </th>
             </tr>
         </thead>
-        <tbody>
+         <tbody>
             @foreach (var item in Model.Categories)
             {
                 <tr>
@@ -36,9 +36,7 @@
                         else
                         {
                             <div class="badge bg-info text-decoration-none  text-light p-2 px-3" asp-area="">@item.TotalProducts</div>
-
                         }
-
                     </td>
                     <td>
                         <a class="btn btn-outline-info" href='https://localhost:44380/Category/CategoryAddEdit?CategoryId=@item.CategoryId'>Edit</a>
@@ -46,13 +44,12 @@
                     </td>
                 </tr>
             }
-        </tbody>
+        </tbody> 
     </table>
     <div class="row d-flex justify-content-between">
         <div class="col-md-3">
             @if (ViewBag.TotalPages >= 1)
             {
-                <!-- Pagination controls -->
                 <nav aria-label="Page navigation ">
                     <ul class="pagination">
                         @for (int i = 1; i <= ViewBag.TotalPages; i++)
@@ -72,7 +69,6 @@
                 <option value="10">10</option>
                 <option value="15">15</option>
             </select>
-
         </div>
     </div>
 </div>
@@ -115,6 +111,7 @@
                     showDenyButton: false,
                     showCancelButton: false,
                     confirmButtonText: "oky",
+                    allowOutsideClick: false
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.reload();
@@ -130,6 +127,7 @@
                     showDenyButton: false,
                     showCancelButton: false,
                     confirmButtonText: "oky",
+                    allowOutsideClick: false
                 }).then((result) => {
                     if (result.isConfirmed) {
                         location.reload();

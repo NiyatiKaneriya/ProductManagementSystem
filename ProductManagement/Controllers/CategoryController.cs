@@ -43,8 +43,9 @@ namespace ProductManagement.Controllers
                 return View();
             }
 
-            CategoryDetails categoryDetails = _categoryRepository.GetCategoryDetails(CategoryId.Value);
-            return View(categoryDetails);
+            //CategoryDetails categoryDetails = _categoryRepository.GetCategoryDetails(CategoryId.Value);
+            //return View(categoryDetails);
+            return View();
         }
 
         public IActionResult AddEditCategory(CategoryDetails category)

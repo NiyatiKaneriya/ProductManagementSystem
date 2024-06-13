@@ -9,7 +9,7 @@
         <a type="button" class="btn btn-info my-3" asp-action="CategoryAddEdit" asp-controller="Category">Add Category</a>
     </div>
     <div id="CategoryList"></div>
-    <div>
+     <div>
         <table class="table text-center dt-responsive" id="dtExample">
             <thead>
                 <tr>
@@ -29,10 +29,11 @@
             </thead>
 
         </table>
-    </div>
+    </div> 
 </section>
 @section Scripts{
     <script>
+        
         $(document).ready(function () {
             $.ajax({
                 url: 'https://localhost:44339/api/Category',
@@ -40,7 +41,7 @@
                 type: "Get",
                 success: function (data) {
                     var tr;
-                    
+                   
                     for (var i = 0; i < data.length; i++) {
                         tr = tr + "<tr>";
                         tr = tr + "<td hidden >" + data[i].categoryId + "</td>";
@@ -50,7 +51,7 @@
                         } else {
                             tr = tr + "<td>  <div class='badge bg-info text-decoration-none  text-light p-2 px-3'>" + data[i].totalProducts + " </div> </td > ";
                         }
-                        tr = tr + "<td> <a class='btn btn-outline-info' href='/Category/CategoryAddEdit?CategoryId=" + data[i].categoryId+ "'>" + " Edit </a>" +
+                        tr = tr + "<td > <a class='btn btn-outline-info' href='/Category/CategoryAddEdit?CategoryId=" + data[i].categoryId+ "'>" + " Edit </a>" +
                         "<a class='btn btn-outline-danger' data-bs-toggle='modal' data-bs-target='#deletePopupCategory' data-bs-CategoryId=" + data[i].categoryId + ">Delete</a> </td>";
 
                         tr = tr + "</tr>";

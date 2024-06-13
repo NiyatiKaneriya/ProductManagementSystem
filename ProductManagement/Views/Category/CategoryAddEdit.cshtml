@@ -8,17 +8,17 @@
 
     <h3 class="mb-3 ">Add Category</h3>
 
-    <form class="row"  id="categoryform">
+    <form class="row" id="categoryform">
         <div class="my-3">Add category name and sequence for ordering it</div>
         <div class="col-6">
-            <input asp-for="CategoryId" id="CategoryId" hidden/>
+            <input id="CategoryId" name="CategoryId" hidden/>
             <div class="form-floating mb-3">
-                <input type="text" asp-for="CategoryName" maxlength="50" class="form-control" id="CategoryName" placeholder="Enter Category here....">
+                <input type="text" name="CategoryName" maxlength="50" class="form-control" id="CategoryName" placeholder="Enter Category here....">
                 <label for="floatingInput">Category Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
                 <span class="text-danger" id="CategoryNameerror"></span>
             </div>
             <div class="form-floating mb-3">
-                <input type="number" asp-for="Sequence" class="form-control" id="Sequence" placeholder="Enter sequence here....">
+                <input type="number" name="Sequence" class="form-control" id="Sequence" placeholder="Enter sequence here....">
                 <label for="floatingInput">Sequence<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
                 <span class="text-danger" id="Sequenceerror"></span>
             </div>
@@ -32,33 +32,30 @@
     <script>
         $(document).ready(function () {
             const params = new URLSearchParams(window.location.search);
-
-            
             if (params.get('CategoryId') != null) {
                 $.ajax({
                     url: 'https://localhost:44339/api/Category/id?id=' + params.get('CategoryId'),
                     dataType: "json",
-                    type: "Get",
                     contentType: 'application/json',
-
+                    type: "Get",
                     success: function (response) {
-                        console.log(response);
-
+                        document.getElementById('CategoryId').value = response.categoryId;
+                        document.getElementById('CategoryName').value = response.categoryName;
+                        document.getElementById('Sequence').value = response.sequence;
                     },
                     error: function (xhr) {
-                        alert('error');
                     }
                 });
             }
-            
+
         });
-        var inputField = document.getElementById('Sequence');
-        inputField.onkeydown = function (event) {
-            // Only allow if the e.key value is a number or if it's 'Backspace'
-            if (isNaN(event.key) && event.key !== 'Backspace') {
-                event.preventDefault();
-            }
-        };
+        // var inputField = document.getElementById('Sequence');
+        // inputField.onkeydown = function (event) {
+        //     // Only allow if the e.key value is a number or if it's 'Backspace'
+        //     if (isNaN(event.key) && event.key !== 'Backspace') {
+        //         event.preventDefault();
+        //     }
+        // };
         function validateForm() {
             const CategoryName =
                 document.getElementById("CategoryName").value;
@@ -72,7 +69,7 @@
 
             CategoryNameerror.textContent = "";
             Sequenceerror.textContent = "";
-    
+
             let isValid = true;
 
             if (CategoryName.trim() === "") {
@@ -91,7 +88,7 @@
             }
             return isValid;
         }
-      
+
         $("#categoryform").submit(function () {
             let form = document.getElementById("categoryform");
             let formData = {};
@@ -101,9 +98,10 @@
                     formData[element.name] = element.value;
                 }
             }
+            debugger
             let jsonData = JSON.stringify(formData);
-            
-            if (document.getElementById("CategoryId").value == null) {
+            console.log(jsonData + "  " + document.getElementById("CategoryId").value)
+            if (document.getElementById("CategoryId").value == '') {
                 $.ajax({
                     url: 'https://localhost:44339/api/Category',
                     dataType: "json",
@@ -111,30 +109,92 @@
                     contentType: 'application/json',
                     data: jsonData,
                     success: function (response) {
+                        debugger;
+                        console.log(response);
+                         alert('success add');
+                         window.open("https://localhost:44380/", "_self")
+                        // Swal.fire({
+                        //     title: 'Success!',
+                        //     icon: 'success',
+                        //     text: 'Category Added Successfully',
+                        //     showDenyButton: false,
+                        //     showCancelButton: false,
+                        //     confirmButtonText: "oky",
+                        //     allowOutsideClick: false
+                        // }).then((result) => {
+                        //     if (result.isConfirmed) {
+                        //         window.open("https://localhost:44380/", "_self")
+                        //     }
+                        // });
                         
                     },
                     error: function (xhr) {
-                        alert('error');
+                        alert('error add' + xhr);
+                         window.open("https://localhost:44380/", "_self")
+                        // Swal.fire({
+                        //     title: 'Error!',
+                        //     text: 'Category not added',
+                        //     icon: 'error',
+                        //     showDenyButton: false,
+                        //     showCancelButton: false,
+                        //     confirmButtonText: "oky",
+                        //     allowOutsideClick: false
+                        // }).then((result) => {
+                        //     if (result.isConfirmed) {
+                        //         window.open("https://localhost:44380/", "_self")
+                        //     }
+                        // });
                     }
                 });
             } else {
                 $.ajax({
                     url: 'https://localhost:44339/api/Category?id=' + document.getElementById("CategoryId").value,
-                    dataType: "json",
+                     dataType: "json",
                     type: "Put",
                     contentType: 'application/json',
                     data: jsonData,
                     success: function (response) {
+                        debugger;
+                        console.log(response);
+                        alert('success edit');
+                        window.open("https://localhost:44380/", "_self")
+                        // Swal.fire({
+                        //     title: 'Success!',
+                        //     icon: 'success',
+                        //     text: 'Category edited Successfully',
+                        //     showDenyButton: false,
+                        //     showCancelButton: false,
+                        //     confirmButtonText: "oky",
+                        //     allowOutsideClick: false
+                        // }).then((result) => {
+                        //     if (result.isConfirmed) {
+                        //         window.open("https://localhost:44380/", "_self")
+                        //     }
+                        // });
                         
                     },
                     error: function (xhr) {
-                        alert('error');
+                        alert('error edit' + xhr);
+                         window.open("https://localhost:44380/", "_self")
+                        // Swal.fire({
+                        //     title: 'Error!',
+                        //     text: 'Category not edited',
+                        //     icon: 'error',
+                        //     showDenyButton: false,
+                        //     showCancelButton: false,
+                        //     confirmButtonText: "oky",
+                        //     allowOutsideClick: false
+                        // }).then((result) => {
+                        //     if (result.isConfirmed) {
+                        //         window.open("https://localhost:44380/", "_self")
+                        //     }
+                        // });
                     }
                 });
             }
-            window.location.replace('https://localhost:44380');
-            
+
+
         });
     </script>
-                
+
 }
