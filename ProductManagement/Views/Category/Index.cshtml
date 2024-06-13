@@ -9,9 +9,61 @@
         <a type="button" class="btn btn-info my-3" asp-action="CategoryAddEdit" asp-controller="Category">Add Category</a>
     </div>
     <div id="CategoryList"></div>
+    <div>
+        <table class="table text-center dt-responsive" id="dtExample">
+            <thead>
+                <tr>
+                    <th hidden>
+                        Category Id
+                    </th>
+                    <th>
+                        Category Name
+                    </th>
+                    <th>
+                        Total Products
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+
+        </table>
+    </div>
 </section>
 @section Scripts{
     <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: 'https://localhost:44339/api/Category',
+                dataType: "json",
+                type: "Get",
+                success: function (data) {
+                    var tr;
+                    
+                    for (var i = 0; i < data.length; i++) {
+                        tr = tr + "<tr>";
+                        tr = tr + "<td hidden >" + data[i].categoryId + "</td>";
+                        tr = tr + "<td>" + data[i].categoryName + "</td>";
+                        if (data[i].totalProducts > 0) {
+                            tr = tr + "<td>  <a class='badge bg-info text-decoration-none  text-light p-2 px-3'  href='/Products?CategoryId=" + data[i].categoryId +"'>" + data[i].totalProducts + " </a> </td > ";
+                        } else {
+                            tr = tr + "<td>  <div class='badge bg-info text-decoration-none  text-light p-2 px-3'>" + data[i].totalProducts + " </div> </td > ";
+                        }
+                        tr = tr + "<td> <a class='btn btn-outline-info' href='/Category/CategoryAddEdit?CategoryId=" + data[i].categoryId+ "'>" + " Edit </a>" +
+                        "<a class='btn btn-outline-danger' data-bs-toggle='modal' data-bs-target='#deletePopupCategory' data-bs-CategoryId=" + data[i].categoryId + ">Delete</a> </td>";
+
+                        tr = tr + "</tr>";
+                    }
+                    $('#dtExample').append(tr);
+                },
+                error: function (xhr) {
+                    alert('No Valid Data');
+                }
+            });
+        }
+        );
+        
         $(document).ready(function () {
             CategoryPagination(1, 5);
         });
@@ -46,7 +98,6 @@
             $.ajax({
                 url: '/Products/GetProductsByFilter',
                 data: { categoryfilter: categoryfilter, generalSearch: generalSearch, multiselectlist: multiselectlist.toString(), columnName: columnName, sorttype: sorttype, page: page },
-
                 success: function (response) {
                     const page = window.open("Products", "_self")
                     page.document.getElementById('categoryfilter').value = CategoryId;

@@ -8,10 +8,10 @@
 
     <h3 class="mb-3 ">Add Category</h3>
 
-    <form class="row" asp-action="AddEditCategory" asp-controller="Category" id="categoryform">
+    <form class="row"  id="categoryform">
         <div class="my-3">Add category name and sequence for ordering it</div>
         <div class="col-6">
-            <input hidden asp-for="CategoryId" />
+            <input asp-for="CategoryId" id="CategoryId" hidden/>
             <div class="form-floating mb-3">
                 <input type="text" asp-for="CategoryName" maxlength="50" class="form-control" id="CategoryName" placeholder="Enter Category here....">
                 <label for="floatingInput">Category Name<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
@@ -22,17 +22,36 @@
                 <label for="floatingInput">Sequence<i class="fa-solid fa-asterisk text-danger px-2 small"></i></label>
                 <span class="text-danger" id="Sequenceerror"></span>
             </div>
-
-            <input type="submit" onclick="validateForm()" class="btn btn-info" />
-            <a class="btn btn-outline-info" asp-action="Index" asp-controller="Category">Cancel</a>
+            <button type="submit" onclick="validateForm()" class="btn btn-info">Submit</button>
+            <button class="btn btn-outline-info" asp-action="Index" asp-controller="Category">Cancel</button>
         </div>
     </form>
-
-
 </section>
 
 @section Scripts{
     <script>
+        $(document).ready(function () {
+            const params = new URLSearchParams(window.location.search);
+
+            
+            if (params.get('CategoryId') != null) {
+                $.ajax({
+                    url: 'https://localhost:44339/api/Category/id?id=' + params.get('CategoryId'),
+                    dataType: "json",
+                    type: "Get",
+                    contentType: 'application/json',
+
+                    success: function (response) {
+                        console.log(response);
+
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            }
+            
+        });
         var inputField = document.getElementById('Sequence');
         inputField.onkeydown = function (event) {
             // Only allow if the e.key value is a number or if it's 'Backspace'
@@ -71,7 +90,51 @@
                 event.preventDefault();
             }
             return isValid;
-}
+        }
+      
+        $("#categoryform").submit(function () {
+            let form = document.getElementById("categoryform");
+            let formData = {};
+            for (let i = 0; i < form.elements.length; i++) {
+                let element = form.elements[i];
+                if (element.type !== "submit") {
+                    formData[element.name] = element.value;
+                }
+            }
+            let jsonData = JSON.stringify(formData);
+            
+            if (document.getElementById("CategoryId").value == null) {
+                $.ajax({
+                    url: 'https://localhost:44339/api/Category',
+                    dataType: "json",
+                    type: "Post",
+                    contentType: 'application/json',
+                    data: jsonData,
+                    success: function (response) {
+                        
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: 'https://localhost:44339/api/Category?id=' + document.getElementById("CategoryId").value,
+                    dataType: "json",
+                    type: "Put",
+                    contentType: 'application/json',
+                    data: jsonData,
+                    success: function (response) {
+                        
+                    },
+                    error: function (xhr) {
+                        alert('error');
+                    }
+                });
+            }
+            window.location.replace('https://localhost:44380');
+            
+        });
     </script>
                 
 }

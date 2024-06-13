@@ -90,7 +90,6 @@ namespace ProductManagement.Repositories
             {
                 throw ex;
             }
-
         }
         #endregion
 
@@ -113,7 +112,7 @@ namespace ProductManagement.Repositories
         }
         #endregion
 
-        #region get categories for dropdowns
+        #region get categories for dropdowns and use in many methods
         /// <summary>
         /// Gets the categories.
         /// </summary>
@@ -138,7 +137,33 @@ namespace ProductManagement.Repositories
             {
                 throw ex;
             }
+        }
+        #endregion
 
+        #region GetCategoryDetails for edit category
+        /// <summary>
+        /// GetCategoryDetails for edit category
+        /// </summary>
+        /// <param name="CategoryId"></param>
+        /// <returns></returns>
+        public CategoryDetails GetCategoryDetails(int CategoryId)
+        {
+            try
+            {
+                Category categoryDetail = _context.Categories.First(e => e.CategoryId == CategoryId);
+                CategoryDetails data = new CategoryDetails
+                {
+                    CategoryId = categoryDetail.CategoryId,
+                    CategoryName = categoryDetail.CategoryName,
+                    Sequence = categoryDetail.Sequence
+                };
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         #endregion
 
@@ -167,35 +192,6 @@ namespace ProductManagement.Repositories
             {
                 throw ex;
             }
-
-        }
-        #endregion
-
-        #region GetCategoryDetails for edit category
-        /// <summary>
-        /// GetCategoryDetails for edit category
-        /// </summary>
-        /// <param name="CategoryId"></param>
-        /// <returns></returns>
-        public CategoryDetails GetCategoryDetails(int CategoryId)
-        {
-            try
-            {
-                Category categoryDetail = _context.Categories.First(e => e.CategoryId == CategoryId);
-                CategoryDetails data = new CategoryDetails
-                {
-                    CategoryId = categoryDetail.CategoryId,
-                    CategoryName = categoryDetail.CategoryName,
-                    Sequence = categoryDetail.Sequence
-                };
-
-                return data;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
         }
         #endregion
     }
